@@ -18,8 +18,8 @@ app = Flask(__name__)
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'Abi1301#',
-    'database': 'a_new',
+    'password': 'Temp_passw',
+    'database': 'Temp_db',
     'port':3306
 }
 
