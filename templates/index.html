@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Management System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Movie Management System!</h1>
+        <button class="btn btn-primary" id="sidebar-toggle">Toggle Sidebar</button>
+        <div class="row mt-4">
+            <div class="col-md-3" id="sidebar">
+                <h4>Languages</h4>
+                <ul id="language-list" class="list-group">
+                    <!-- Language options will be dynamically added here -->
+                </ul>
+            </div>
+            <div class="col-md-9" id="main-content">
+                <!-- Movie genres and listings will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle sidebar
+        $("#sidebar-toggle").click(function () {
+            $("#sidebar").toggle();
+        });
+    
+        // Function to load languages and genres
+        $(document).ready(function () {
+            $.getJSON("/languages", function (data) {
+                var languages = data;
+                $.each(languages, function (index, language) {
+                    var languageDropdown = "<li class='list-group-item' id='" + language + "'>" + language +
+                        "<ul class='list-group sub-list' id='" + language + "-genres'></ul></li>";
+                    $("#language-list").append(languageDropdown);
+                });
+    
+                // Attach click events after adding languages to the DOM
+                $.each(languages, function (index, language) {
+                    $(document).on('click', '#' + language, function () {
+                        getGenres(language);
+                    });
+                });
+            });
+        });
+    
+        // Function to get genres based on selected language
+        function getGenres(language) {
+            $.getJSON("/genres/" + language, function (data) {
+                var genres = data;
+                $("#" + language + "-genres").empty();
+                $.each(genres, function (index, genre) {
+                    $("#" + language + "-genres").append("<li class='list-group-item'>" + genre + "</li>");
+                });
+                // Add event listener for genre clicks
+                $(document).on('click', '.' + language + '-genres li', function () {
+                    getMovies(language, $(this).text());
+                });
+            });
+        }
+    
+        // Function to get movies based on selected language and genre
+        function getMovies(language, genre) {
+            $.getJSON("/movies/" + language + "/" + genre, function (data) {
+                var movies = data;
+                var table = "<table class='table'><thead><tr><th onclick='sortTable(0)'>Rating</th><th>Title</th><th>Directors</th></tr></thead><tbody>";
+                $.each(movies, function (index, movie) {
+                    table += "<tr><td>" + movie.rating + "</td><td>" + movie.title + "</td><td>" + movie.directors + "</td></tr>";
+                });
+                table += "</tbody></table>";
+                $("#" + genre).append(table);
+            });
+        }
+    
+        // Function to sort table by column
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = $("table").get(0);
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = $("tbody tr");
+                for (i = 0; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[n];
+                    y = rows[i + 1].getElementsByTagName("td")[n];
+                    if (dir == "asc") {
+                        if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

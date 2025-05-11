@@ -1,0 +1,1527 @@
+/* Google Fonts Import Link */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+html, body {
+  height: 100%;
+  background: #E4E9F7;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 260px;
+  background: #11101d;
+  z-index: 100;
+  transition: all 0.5s ease;
+}
+.sidebar .nav-links li .sub-menu a.selected,
+.sidebar .nav-links li .iocn-link a.selected {
+  background-color: white;
+  color: #11101d;
+}
+.sidebar .nav-links li .sub-menu a:hover,
+.sidebar .nav-links li .iocn-link a:hover {
+    opacity: 1;
+}
+.sidebar .nav-links li .iocn-link i {
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.sidebar.close {
+  width: 78px;
+}
+.sidebar .logo-details {
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.sidebar .logo-details i {
+  font-size: 30px;
+  color: #fff;
+  height: 50px;
+  min-width: 78px;
+  text-align: center;
+  line-height: 50px;
+}
+
+.sidebar .logo-details .logo_name {
+  font-size: 22px;
+  color: #fff;
+  font-weight: 600;
+  transition: 0.3s ease;
+  transition-delay: 0.1s;
+}
+.sidebar.close .logo-details .logo_name {
+  transition-delay: 0s;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar .nav-links {
+  height: 100%;
+  padding: 30px 0 150px 0;
+  overflow: auto;
+}
+.sidebar.close .nav-links {
+  overflow: visible;
+}
+.sidebar .nav-links::-webkit-scrollbar {
+  display: none;
+}
+.sidebar .nav-links li {
+  position: relative;
+  list-style: none;
+  transition: all 0.4s ease;
+}
+.sidebar .nav-links li:hover {
+  background: #1d1b31;
+}
+.sidebar .nav-links li .iocn-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 0px; 
+}
+.sidebar.close .nav-links li .iocn-link {
+  display: block;
+}
+.sidebar .nav-links li i {
+  height: 50px;
+  min-width: 78px;
+  text-align: center;
+  line-height: 50px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.sidebar .nav-links li.showMenu i.arrow {
+  transform: rotate(-180deg);
+}
+.sidebar.close .nav-links i.arrow {
+  display: none;
+}
+
+.sidebar .nav-links li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.sidebar .nav-links li a .link_name {
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  transition: all 0.4s ease;
+}
+.sidebar.close .nav-links li a .link_name {
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar .nav-links li .sub-menu {
+  padding: 6px 6px 14px 80px;
+  margin-top: -10px;
+  background: #1d1b31;
+  display: none;
+}
+.sidebar .nav-links li.showMenu .sub-menu {
+  display: block;
+}
+.sidebar .nav-links li .sub-menu a {
+  color: #fff;
+  font-size: 15px;
+  padding: 5px 0;
+  white-space: nowrap;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+.sidebar .nav-links li .sub-menu a:hover {
+  opacity: 1;
+}
+.sidebar .nav-links li .iocn-link a.selected .link_name,
+.sidebar .nav-links li .iocn-link a.selected i,
+.sidebar .nav-links li .iocn-link a.selected .arrow {
+  color: #11101d;
+}
+
+.sidebar.close .nav-links li .sub-menu {
+  position: absolute;
+  left: 100%;
+  top: -10px;
+  margin-top: 0;
+  padding: 10px 20px;
+  border-radius: 0 6px 6px 0;
+  opacity: 0;
+  display: block;
+  pointer-events: none;
+  transition: 0s;
+}
+.sidebar.close .nav-links li:hover .sub-menu {
+  top: 0;
+  opacity: 1;
+  pointer-events: auto;
+  transition: all 0.4s ease;
+}
+.sidebar .nav-links li .sub-menu .link_name {
+  display: none;
+}
+.sidebar.close .nav-links li .sub-menu .link_name {
+  font-size: 18px;
+  opacity: 1;
+  display: block;
+}
+.sidebar .nav-links li .sub-menu.blank {
+  opacity: 1;
+  pointer-events: auto;
+  padding: 3px 20px 6px 16px;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar .nav-links li:hover .sub-menu.blank {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.sidebar .profile-details {
+  position: fixed;
+  bottom: 0;
+  width: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1d1b31;
+  padding: 12px 0;
+  transition: all 0.5s ease;
+}
+.sidebar.close .profile-details {
+  background: none;
+}
+.sidebar.close .profile-details {
+  width: 78px;
+}
+.sidebar .profile-details .profile-content {
+  display: flex;
+  align-items: center;
+}
+.sidebar .profile-details img {
+  height: 52px;
+  width: 52px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin: 0 14px 0 12px;
+  background: #1d1b31;
+  transition: all 0.5s ease;
+}
+.sidebar.close .profile-details img {
+  padding: 10px;
+}
+.sidebar .profile-details .profile_name,
+.sidebar .profile-details .job {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.sidebar.close .profile-details i,
+.sidebar.close .profile-details .profile_name,
+.sidebar.close .profile-details .job {
+  display: none;
+}
+.sidebar .profile-details .job {
+  font-size: 12px;
+}
+.home-section {
+  position: relative;
+  background: #E4E9F7;
+  min-height: 100vh; /* Ensure this section also covers the full viewport height */
+  left: 260px;
+  width: calc(100% - 260px);
+  transition: all 0.5s ease;
+  padding: 12px;
+}
+.sidebar.close ~ .home-section {
+  left: 78px;
+  width: calc(100% - 78px);
+}
+.home-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+.home-section .home-content .bx-menu,
+.home-section .home-content .text {
+  color: #11101d;
+  font-size: 35px;
+}
+.home-section .home-content .bx-menu {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.home-section .home-content .text {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+/* Center the image */
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 72px); /* Adjusted height to account for the header */
+
+}
+.image-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 400px) {
+  .sidebar {
+    width: 240px;
+  }
+  .sidebar.close {
+    width: 78px;
+  }
+  .sidebar .profile-details {
+    width: 240px;
+  }
+  .sidebar.close .profile-details {
+    background: none;
+  }
+  .sidebar.close .profile-details {
+    width: 78px;
+  }
+  .home-section {
+    left: 240px;
+    width: calc(100% - 240px);
+  }
+  .sidebar.close ~ .home-section {
+    left: 78px;
+    width: calc(100% - 78px);
+  }
+}
+
+/* Table styles */
+#movie-table-container {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.movie-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: left;
+}
+.movie-table th, .movie-table td {
+  padding: 12px 15px;
+}
+.movie-table th {
+  background-color: #11101d;
+  color: white;
+  cursor: pointer;
+}
+.movie-table th:hover {
+  background-color: #1d1b31;
+}
+.movie-table tr {
+  border-bottom: 1px solid #dddddd;
+}
+.movie-table tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+.movie-table tr:last-of-type {
+  border-bottom: 2px solid #11101d;
+}
+
+.update-db-btn,.admin-tasks-btn, .create-delete-languages-btn,.show-to-see-btn,.move-movies-btn, .move-meta-btn,.move-copy-files-btn, .backup-db-btn, .adv-search-btn{
+  font-size: 1.2em; /* Increase the font size */
+  padding: 10px 20px; /* Increase padding for a larger button */
+  background-color: #11101d; /* Button background color */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.database-tasks-btn {
+  font-size: 1.2em;
+  padding: 10px 20px;
+  background-color: #d9534f; /* Red button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.database-tasks-btn:hover {
+  background-color: #c9302c;
+}
+
+/* Database Tasks Dialog */
+.database-tasks-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 40px;
+  border-radius: 10px;
+  width: 50%;
+  max-width: 600px;
+  font-size: 1.2em;
+}
+
+.database-tasks-dialog .dialog-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.database-tasks-dialog .dialog-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.move-meta-btn {
+  margin-left: 10px; /* Create space between buttons */
+}
+
+.update-db-btn:hover,.to-see-btn:hover, .move-movies-btn:hover,.move-copy-files-btn:hover, .move-meta-btn:hover,.adv-search-btn:hover {
+  background-color: #1d1b31; 
+}
+
+.move-movies-btn {
+  float: left; /* Align to the left */
+}
+
+
+
+.update-db-dialog,.move-movies-dialog{
+  display: none; /* Hide by default */
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  z-index: 1000; /* Ensure it's on top of other content */
+  padding: 40px; /* Increase padding for a larger dialog */
+  border-radius: 10px;
+  width: 50%; /* Increase width */
+  max-width: 600px; /* Max width */
+  font-size: 1.2em; /* Increase font size */
+}
+/* Increase the size of the 'Enter the folder path' font */
+.update-db-dialog .dialog-content,.move-movies-dialog .dialog-content{
+  font-size: 1.2em; /* Increase font size */
+}
+
+/* Increase the size of the input field */
+.update-db-dialog input[type="text"], .move-movies-dialog input[type="text"],.move-movies-dialog select.movie-rating{
+  font-size: 0.75em; /* Increase font size */
+  padding: 10px; /* Increase padding for a larger input field */
+}
+
+/* Increase the size of the 'Usual' button */
+.usual-dialog-btn,.update-files-btn,.recover-db-btn,.delete-db-btn ,.move-dialog-btn,.close-move-dialog-btn{
+  cursor: pointer;
+  font-size: 0.75em; /* Increase font size */
+  padding: 10px 20px; /* Increase padding for a larger button */
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.update-db-dialog .dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.close-btn, .close-dialog-btn, .close-movie-btn{
+  cursor: pointer;
+  font-size: 0.75em; /* Increase font size */
+  padding: 10px 20px; /* Increase padding for buttons */
+}
+.view-movie-dialog {
+    display: none; /* Hide by default */
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  z-index: 1000; /* Ensure it's on top of other content */
+  padding: 40px; /* Increase padding for a larger dialog */
+  border-radius: 10px;
+  width: 50%; /* Increase width */
+  max-width: 600px; /* Max width */
+  font-size: 1.2em; /* Increase font size */
+}
+
+.view-movie-dialog .dialog-content {
+    font-size: 1.2em;
+}
+.view-movie-dialog.active {
+  display: block; /* Show dialog */
+}
+.view-movie-dialog .close-view-dialog-btn {
+    cursor: pointer;
+  font-size: 0.75em; /* Increase font size */
+  padding: 10px 20px;
+    cursor: pointer;
+}
+
+.view-movie-dialog .dialog-buttons {
+    text-align: right
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;  /* Adjust margin as needed */
+}
+
+.search-attribute, .search-query, .search-btn {
+  font-size: 18px;  /* Increase font size */
+  padding: 10px;    /* Increase padding */
+  margin-right: 10px;  /* Space between elements */
+}
+
+.search-attribute {
+  width: 150px;  /* Adjust width as needed */
+}
+
+.search-query {
+  flex: 1;  /* Take available space */
+  width: 300px;  /* Set a minimum width */
+}
+
+.search-btn {
+  background-color: #11101d;  /* Customize button color */
+  color: white;  /* Button text color */
+  border: none;  /* Remove border */
+  cursor: pointer;  /* Pointer cursor on hover */
+  transition: background-color 0.3s;  /* Transition effect */
+}
+
+.search-btn:hover {
+  background-color: #1d1b31;  /* Button color on hover */
+}
+
+.progress-container {
+  width: 100%;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 30px;
+}
+.entry-count {
+  font-size: 20px;
+}
+.progress-bar {
+  height: 30px;
+  background-color: #11101d;
+  width: 0;
+  transition: width 0.2s linear;
+}
+
+.progress-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #11101d;
+}
+
+.files-processed {
+  margin-top: 10px;
+  font-size: 10px;
+  color: #11101d;
+}
+/* Zoom buttons styles */
+.zoom-buttons-container {
+  display: flex; /* Use flexbox to arrange items in a row */
+  justify-content: space-between; /* Distribute items evenly along the main axis */
+  align-items: center; /* Align items vertically in the center */
+}
+
+.zoom-buttons {
+  display: flex;
+  gap: 10px; /* Adjust padding as needed */
+  align-items: center; /* Align items vertically in the center */
+}
+
+.zoom-buttons button {
+  margin-left: 5px; /* Adjust margin between buttons as needed */
+  width: 30px; /* Set width and height to make the buttons circular */
+  height: 30px;
+  border-radius: 50%; /* Make the buttons circular */
+  border: none; /* Remove default button border */
+  background-color: #11101d; /* Set button background color */
+  color: white; /* Set button text color */
+  font-size: 25px; /* Adjust font size as needed */
+  cursor: pointer; /* Set cursor to pointer on hover */
+  outline: none; /* Remove outline when button is focused */
+  transition: background-color 0.3s; /* Add transition effect for background color */
+}
+
+.zoom-buttons button:hover {
+  background-color: #1d1b31; /* Change background color on hover */
+}
+
+.zoom-buttons button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+#folder-path {
+  flex: 1;
+  padding-right: 10px;
+}
+
+.browse-btn {
+  padding: 5px 10px;
+  background-color: #11101d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.browse-btn:hover {
+  background-color: #1d1b31;
+}
+
+.confirm-delete-dialog,.confirm-update-dialog{
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: none; /* Hidden by default */
+}
+
+
+.confirm-delete-dialog .dialog-buttons,.confirm-update-dialog .dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirm-delete-dialog .dialog-buttons button,.confirm-update-dialog .dialog-buttons button {
+  padding: 10px 20px;
+}
+
+
+.edit-meta-dialog ,.edit-genre-dialog{
+  display: none; /* Hide by default */
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  z-index: 1000; /* Ensure it's on top of other content */
+  padding: 40px; /* Increase padding for a larger dialog */
+  border-radius: 10px;
+  width: 50%; /* Increase width */
+  max-width: 600px; /* Max width */
+  font-size: 1.2em; /* Increase font size */
+}
+
+.edit-meta-dialog .dialog-content,.edit-genre-dialog .dialog-content{
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2em;
+}
+
+.edit-meta-dialog h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.edit-meta-dialog h3 {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 1em; /* Adjust font size for subheading */
+}
+
+.edit-meta-dialog .button-row, .edit-genre-dialog .button-row{
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.edit-meta-dialog .dialog-btn,.edit-genre-dialog .dialog-btn{
+  cursor: pointer;
+  font-size: 0.75em; /* Adjust font size */
+  padding: 5px 10px;
+}
+
+.edit-meta-dialog .edit-form, .edit-genre-dialog .edit-form{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-meta-dialog .edit-form .form-row,.edit-genre-dialog .edit-form .form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-meta-dialog .edit-form label {
+  margin-top: 10px;
+}
+
+.edit-meta-dialog .edit-form input {
+  padding: 8px;
+  font-size: 16px;
+}
+
+.edit-meta-dialog .close-btn {
+  cursor: pointer;
+  font-size: 1em; /* Adjust font size */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.edit-meta-dialog .done-btns {
+  display: flex;
+  justify-content: center; /* Align buttons to the center */
+}
+
+.edit-meta-dialog .done-btns button {
+  margin-top: 10px; /* Add some top margin for spacing */
+  font-size: 0.75em; /* Increase font size */
+  padding: 10px 20px; /* Increase padding */
+  background-color: #11101d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-meta-dialog .done-btns button:hover {
+  background-color: #1d1b31;
+}
+
+.move-meta-dialog {
+  display: none; /* Hide by default */
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  z-index: 1000; /* Ensure it's on top of other content */
+  padding: 40px; /* Increase padding for a larger dialog */
+  border-radius: 10px;
+  width: 50%; /* Increase width */
+  max-width: 600px; /* Max width */
+  font-size: 1.2em; /* Increase font size */
+}
+
+.move-meta-dialog .move-meta-content {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2em;
+}
+
+.move-meta-dialog .close-meta {
+  cursor: pointer;
+  font-size: 2em;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.move-meta-dialog h2 {
+  margin-bottom: 20px;
+}
+
+.move-meta-dialog p {
+  margin-bottom: 10px;
+}
+
+.move-meta-dialog label {
+  margin-bottom: 5px;
+}
+
+.move-meta-dialog select {
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.move-meta-dialog .buttons-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.move-meta-dialog button[type="submit"],
+.delete-entries-btn{
+  padding: 10px 20px;
+  font-size: 0.75em;
+  background-color: #11101d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.move-meta-dialog button[type="submit"]:hover,
+.delete-entries-btn:hover {
+  background-color: #1d1b31;
+}
+.move-meta-dialog .button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.nav-dialog {
+  display: none; /* Hide by default */
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  z-index: 1000; /* Ensure it's on top of other content */
+  padding: 40px; /* Increase padding for a larger dialog */
+  border-radius: 10px;
+  width: 50%; /* Increase width */
+  max-width: 600px; /* Max width */
+  font-size: 1.2em; /* Increase font size */
+}
+
+.nav-dialog .dialog-content {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2em;
+}
+
+.nav-dialog h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.nav-dialog h3 {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 1em; /* Adjust font size for subheading */
+}
+
+.nav-dialog .button-row {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.nav-dialog .dialog-btn {
+  cursor: pointer;
+  font-size: 0.75em; /* Adjust font size */
+  padding: 5px 10px;
+}
+
+.nav-dialog .edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-dialog .edit-form .form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-dialog .edit-form label {
+  margin-top: 10px;
+}
+
+.nav-dialog .edit-form input,
+.nav-dialog .edit-form select {
+  padding: 8px;
+  font-size: 16px;
+}
+
+.nav-dialog .close-sdbase-btn {
+  cursor: pointer;
+  font-size: 1em; /* Adjust font size */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.nav-dialog .done-btns {
+  display: flex;
+  justify-content: center; /* Align buttons to the center */
+}
+
+.nav-dialog .done-btns button {
+  margin-top: 10px; /* Add some top margin for spacing */
+  font-size: 0.75em; /* Increase font size */
+  padding: 10px 20px; /* Increase padding */
+  background-color: #11101d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.nav-dialog .done-btns button:hover {
+  background-color: #1d1b31;
+}
+
+.iocn-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+}
+
+.icon-container {
+  display: flex;
+  align-items: right;
+  justify-content: flex-end; /* Move icons to the right */
+  gap: 0;/* Adjust this gap as needed */
+}
+
+.icon-container .bx {
+  cursor: pointer;
+  font-size: 1.5em; /* Adjust icon size as needed */
+}
+
+#adv-search-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto; /* 10% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  max-width: 600px; /* Maximum width */
+}
+
+/* Close button */
+.close-adv-search {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-adv-search:hover,
+.close-adv-search:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Form styles */
+#adv-search-form {
+  margin-top: 20px;
+}
+
+/* Filter group styles */
+.filter-group {
+  margin-bottom: 10px;
+}
+
+.adv-search-attribute {
+  width: calc(50% - 10px); /* Adjust based on your layout */
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.adv-search-query {
+  width: calc(50% - 10px); /* Adjust based on your layout */
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Button styles */
+#add-filter-btn,
+#adv-search-submit-btn {
+  background-color: #11101d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+#add-filter-btn:hover,
+#adv-search-submit-btn:hover {
+  background-color: #1d1b31;
+}
+
+#add-filter-btn:disabled,
+#adv-search-submit-btn:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .modal-content {
+      width: 90%;
+  }
+
+  .adv-search-attribute,
+  .adv-search-query {
+      width: 100%;
+  }
+}
+.update-files-dialog {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  max-width: 600px;
+  max-height: 80%;
+  overflow: hidden;
+}
+
+.update-files-dialog .dialog-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.update-files-dialog h2 {
+  margin-top: 0;
+}
+
+.update-files-dialog .dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.update-files-dialog .close-files-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Style for the Files List Container */
+.files-list-container {
+  max-height: 300px; /* Adjust this value as needed */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 0.9em; /* Smaller font size */
+}
+
+.files-list-container div {
+  margin-bottom: 5px;
+}
+
+.destination-folder-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 50%;
+  max-width: 600px;
+  font-size: 1.2em; /* Increase font size */
+}
+
+.destination-buttons {
+  margin-top: 10px;
+}
+
+.destination-buttons button {
+  margin-right: 10px;
+  background-color: #11101d;
+  color: white;
+  font-size: 1em; /* Increase button font size */
+  padding: 10px 20px; /* Increase button padding */
+  border: none;
+  cursor: pointer;
+}
+
+.destination-buttons button:hover {
+  background-color: #1d1b31;
+}
+
+.close-destination-dialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-destination-dialog:hover {
+  color: #000;
+}
+
+.destination-info {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 1.2em; /* Increase font size */
+  color: #555;
+}
+
+#destination-folder-input {
+  width: 100%; /* Full width */
+  font-size: 1.2em; /* Increase input field font size */
+  padding: 10px; /* Increase input field padding */
+  margin-top: 10px;
+  box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.admin-tasks-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 50%;
+  max-width: 800px;
+  font-size: 1.2em; /* Increase font size */
+}
+
+.admin-tasks-dialog .dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.admin-tasks-dialog .dialog-buttons  {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.admin-tasks-dialog .dialog-buttons button {
+  margin: 0 10px; /* Margin on both sides to space the buttons */
+  background-color: #11101d;
+  color: white;
+  font-size: 1em; /* Increase button font size */
+  padding: 10px 20px; /* Increase button padding */
+  border: none;
+  cursor: pointer;
+}
+
+.admin-tasks-dialog .dialog-buttons button:hover {
+  background-color: #1d1b31;
+}
+
+.close-admin-dialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-admin-dialog:hover {
+  color: #000;
+}
+
+.rename-files-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 50%;
+  max-width: 600px;
+  font-size: 1.2em;
+}
+
+.rename-files-dialog input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+
+.rename-files-dialog .dialog-buttons {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.rename-files-dialog .dialog-buttons button {
+  background-color: #11101d;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  border: none;
+  cursor: pointer;
+}
+
+.rename-files-dialog .dialog-buttons button:hover {
+  background-color: #1d1b31;
+}
+
+.close-rename-dialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-rename-dialog:hover {
+  color: #000;
+}
+
+.change-path-disk-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 50%;
+  max-width: 600px;
+}
+
+.change-path-disk-dialog .dialog-content {
+  position: relative;
+}
+
+.change-path-disk-dialog .close-change-path-disk-dialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.change-path-disk-dialog .close-change-path-disk-dialog:hover {
+  color: #000;
+}
+
+.change-path-disk-dialog .form-row {
+  margin-bottom: 15px;
+}
+
+.change-path-disk-dialog .form-row label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.change-path-disk-dialog .form-row input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.change-path-disk-dialog .form-row.buttons-row {
+  text-align: right;
+}
+
+.change-path-disk-dialog .form-row.buttons-row button {
+  background-color: #11101d;
+  color: white;
+  font-size: 1em;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.change-path-disk-dialog .form-row.buttons-row button:hover {
+  background-color: #1d1b31;
+}
+
+/* Create Language Dialog Styles */
+#create-language-dialog {
+  display: none; /* Initially hidden */
+  position: fixed; 
+  z-index: 1000; /* Ensure it is on top of other elements */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px; 
+  background-color: white;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#create-language-dialog .dialog-content {
+  position: relative;
+}
+
+#create-language-dialog .close-btn {
+  position: absolute;
+  right: 0; /* Adjust the value as needed */
+  top: 0; /* Adjust the value as needed */
+  cursor: pointer;
+  font-size: 24px;
+  color: #333;
+}
+
+#create-language-dialog h2 {
+  margin-top: 0;
+  font-size: 24px;
+  color: #333;
+  text-align: left;
+}
+
+#create-language-dialog .form-row {
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#create-language-dialog .form-row label {
+  font-size: 16px;
+  color: #333;
+  width: 30%;
+}
+
+#create-language-dialog .form-row input {
+  width: 65%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+#create-language-dialog .done-btns {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#create-language-dialog .done-btns .dialog-btn {
+  background-color: #11101d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#create-language-dialog .done-btns .dialog-btn:hover {
+  background-color: #1d1b31;
+}
+
+.to-see-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 50%;
+  max-width: 800px;
+  font-size: 1.2em; /* Increase font size */
+}
+
+.to-see-dialog .dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.to-see-dialog .dialog-buttons  {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.to-see-dialog .dialog-buttons button {
+  margin: 0 10px; /* Margin on both sides to space the buttons */
+  background-color: #11101d;
+  color: white;
+  font-size: 1em; /* Increase button font size */
+  padding: 10px 20px; /* Increase button padding */
+  border: none;
+  cursor: pointer;
+}
+.to-see-dialog .dialog-buttons button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.to-see-dialog .dialog-buttons button:hover {
+  background-color: #1d1b31;
+}
+
+.close-to-see-dialog {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-to-see-dialog:hover {
+  color: #000;
+}
+/* Style for the Create/Delete Languages Dialog */
+.create-delete-languages-dialog {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black with opacity */
+}
+
+.create-delete-languages-dialog .modal-content {
+  background-color: #fefefe;
+  margin: 10% auto; /* 10% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Shadow for modal */
+}
+
+.create-delete-languages-dialog .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.create-delete-languages-dialog .close:hover,
+.create-delete-languages-dialog .close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.create-delete-languages-dialog h2 {
+  color: #333;
+  text-align: center;
+}
+
+.create-delete-languages-dialog .languages-checkboxes {
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+  max-height: 350px; /* Adjust based on your preference */
+}
+
+.create-delete-languages-dialog label {
+  margin-right: 10px; /* Space between checkboxes */
+  cursor: pointer;
+}
+
+.create-delete-languages-dialog button {
+  background-color: #11101d; /* Green background */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  margin-top: 10px;
+}
+
+.create-delete-languages-dialog button:hover {
+  background-color: #1d1b31; /* Darker green */
+}

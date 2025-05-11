@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Rating Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo-details">
+        <i class='bx bxs-user' onclick="openNavDialog()"></i>
+        <span class="logo_name">Ravi</span>
+    </div>
+    <ul class="nav-links" id="language-list">
+        <li>
+            <div class="iocn-link">
+                <a href="#">
+                    <span class="link_name">Select Language</span>
+                </a>
+            </div>
+            <ul class="sub-menu">
+                <!-- Sidebar content will be dynamically generated -->
+            </ul>
+        </li>
+        <!-- Other language options will be generated dynamically -->
+    </ul>
+</div>
+
+<section class="home-section">
+    <div class="home-content">
+        <div class="left-content">
+            <img src="static/menu.png" alt="Menu Icon" id="menuIcon">
+            <span class="text">MMS</span>
+        </div>
+        <div class="search-container">
+            <select id="search-attribute" class="search-attribute">
+                <option value="" selected disabled>Select Attribute</option>
+                <option value="path">Path</option>
+                <option value="title">Title</option>
+                <option value="genre">Genre</option>
+                <option value="path_root">Path (root)</option>
+                <option value="year">Year</option>
+                <option value="rating">IMDB Rating Range</option>
+                <option value="my_rating">My Rating Range</option>
+                <option value="directors">Director</option>
+                <option value="actor">Actor</option>
+                <option value="runtime">Runtime Range</option>
+            </select>
+            <input type="text" id="search-query" class="search-query" list="search-options" placeholder="Search...">
+            <datalist id="search-options">
+            
+            </datalist>
+            <button id="search-btn" class="search-btn">Search</button>
+        </div>
+        <button id="backup-db-btn" class="backup-db-btn">Backup Database</button>
+        <button id="admin-tasks-btn" class="admin-tasks-btn">Admin Tasks</button>
+        <button id="database-tasks-btn" class="database-tasks-btn">Database Tasks</button>
+        <button id="update-db-btn" class="update-db-btn">Update Database</button>
+        
+    </div>
+    <div class="zoom-buttons-container">
+        <button id="move-movies-btn" class="move-movies-btn">Move to kuppai</button>
+        <button id="move-meta-btn" class="move-meta-btn">Move Meta</button>
+        <button id="move-copy-files-btn" class="move-copy-files-btn">Move/Copy Files</button>
+        <button id="adv-search-btn" class="adv-search-btn">Advanced Search</button>
+        <button id="create-delete-languages-btn" class="create-delete-languages-btn">Create/Delete Languages</button>
+        <button id="show-to-see-btn" class="show-to-see-btn">Show To See</button>
+        <div class="zoom-buttons">
+            <div id="entry-count" class="entry-count">
+                
+            </div>
+            <button id="zoom-out-btn",class="zoom-out-btn">-</button>
+            <button id="zoom-in-btn" class="zoom-in-btn">+</button>
+        </div>
+    </div>
+    {% if show_welcome_image %}
+    <div class="image-container" id="image-container">
+        <img src="{{ url_for('static', filename='welcome.png') }}" alt="Image">
+    </div>
+    {% endif %}
+    <div id="movie-table-container">
+        <table class="movie-table">
+        </table>
+    </div>
+</section>
+
+
+<!-- Create Language Dialog -->
+<div id="create-language-dialog" class="edit-meta-dialog">
+    <div class="dialog-content">
+        <span class="close-btn" onclick="closeCreateLanguageDialog()">&times;</span>
+        <h2>Create New Language</h2>
+        <form id="create-language-form">
+            <div class="form-row">
+                <label for="new-language">Language:</label>
+                <input type="text" id="new-language">
+            </div>
+            <div class="done-btns">
+                <button type="button" id="create-language-btn" class="dialog-btn">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Switch Database Nav Dialog -->
+<div id="nav-dialog" class="nav-dialog" style="display:none;">
+    <div class="dialog-content">
+        <span class="close-sdbase-btn" onclick="closeNavDialog()">&times;</span>
+        <h2>Database Operations</h2>
+        <div class="button-row">
+            <button id="add-database-btn" class="dialog-btn">Add Database</button>
+            <button id="switch-database-btn" class="dialog-btn">Switch Database</button>
+            <button id="delete-database-btn" class="dialog-btn">Delete Database</button>
+        </div>
+
+        <form id="add-database-form" class="sdbase-edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="database-name">Database Name:</label>
+                <input type="text" id="database-name">
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-add-database" class="dialog-btn">Done</button>
+            </div>
+        </form>
+
+        <form id="switch-database-form" class="sdbase-edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="select-database-switch">Select Database:</label>
+                <select id="select-database-switch"></select>
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-switch-database" class="dialog-btn">Switch</button>
+            </div>
+        </form>
+
+        <form id="delete-database-form" class="sdbase-edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="select-database-delete">Select Database:</label>
+                <select id="select-database-delete"></select>
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-delete-database" class="dialog-btn">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Admin Tasks Dialog -->
+<div id="admin-tasks-dialog" class="admin-tasks-dialog" style="display: none;">
+    <div class="dialog-content">
+        <span class="close-admin-dialog">&times;</span>
+        <h3>Choose Option</h3>
+        <div class="dialog-buttons">
+            <button id="missing-languages-btn" class="admin-task-btn">Missing Languages</button>
+            <button id="missing-genres-btn" class="admin-task-btn">Missing Genres</button>
+            <button id="rename-files-btn" class="rename-files-btn">Rename Files</button>
+            <button id="change-path-disk-btn" class="change-path-disk-btn">Change Path Disk</button>
+        </div>
+    </div>
+</div>
+
+<!-- Database Tasks Dialog -->
+<div id="database-tasks-dialog" class="database-tasks-dialog" style="display: none;">
+    <div class="dialog-content">
+        <span class="close-db-dialog">&times;</span>
+        <h3>Database Tasks</h3>
+        <div class="dialog-buttons">
+            <button id="delete-db-btn" class="delete-db-btn">Delete Database</button>
+            <button id="recover-db-btn" class="recover-db-btn">Recover Database</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Rename Files Dialog -->
+<div id="rename-files-dialog" class="rename-files-dialog" style="display: none;">
+    <div class="dialog-content">
+        <span class="close-rename-dialog">&times;</span>
+        <h3>Enter Source Folder</h3>
+        <input type="text" id="source-folder-input" placeholder="Enter folder path">
+        <div class="dialog-buttons">
+            <button id="done-rename-files-btn" class="done-rename-files-btn">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- Change Path Disk Modal -->
+<div id="change-path-disk-modal" class="change-path-disk-dialog" style="display: none;">
+    <div class="dialog-content">
+        <span class="close-change-path-disk-dialog">&times;</span>
+        <h3>Change Path Disk</h3>
+        <form id="change-path-disk-form">
+            <div class="form-row">
+                <label for="present-disk">Present Disk:</label>
+                <input type="text" id="present-disk" name="present-disk" required>
+            </div>
+            <div class="form-row">
+                <label for="required-disk">Required Disk:</label>
+                <input type="text" id="required-disk" name="required-disk" required>
+            </div>
+            <div class="form-row buttons-row">
+                <button type="submit">Change Disk</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Advanced Search -->
+<div id="adv-search-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-adv-search">&times;</span>
+        <h2>Advanced Search</h2>
+        <form id="adv-search-form">
+            <div id="filter-container">
+                <div class="filter-group">
+                    <select class="adv-search-attribute">
+                        <option value="" selected disabled>Select Attribute</option>
+                        <option value="title">Title</option>
+                        <option value="genre">Genre</option>
+                        <option value="path">Path</option>
+                        <option value="year">Year</option>
+                        <option value="rating">IMDB Rating Range</option>
+                        <option value="my_rating">My Rating Range</option>
+                        <option value="directors">Director</option>
+                        <option value="actor">Actor</option>
+                        <option value="runtime">Runtime Range</option>
+                    </select>
+                    <input type="text" class="adv-search-query" list="adv-search-options" placeholder="Search...">
+                    <datalist id="adv-search-options">
+                        <!-- Options will be dynamically populated here -->
+                    </datalist>                    
+                </div>
+            </div>
+            <button type="button" id="add-filter-btn">Add Filter</button>
+            <button type="button" id="adv-search-submit-btn">Search</button>
+        </form>
+    </div>
+</div>
+
+<!-- Create/Delete Languages Dialog -->
+<div id="create-delete-languages-dialog" class="create-delete-languages-dialog" style="display:none;">
+    <div class="modal-content">
+        <span class="close close-dialog">&times;</span>
+        <h2>Select Languages to Create/Delete</h2>
+        <form id="languages-form">
+            <div class="languages-checkboxes" id="languages-checkboxes">
+                <!-- Checkboxes will be dynamically created here -->
+            </div>
+            <button type="button" id="create-languages-btn">Create Languages</button>
+            <button type="button" id="delete-languages-btn">Delete Languages</button>
+        </form>
+    </div>
+</div>
+
+<!-- To See Add/Delete Modal -->
+<div id="to-see-modal" class="to-see-dialog" style="display: none;">
+    <div class="dialog-content">
+        <span class="close-to-see-dialog" onclick="closeToSeeModal()">&times;</span>
+        <h2>Add/Delete To See</h2>
+        <div class="dialog-buttons">
+            <button id="add-to-see-btn">Add</button>
+            <button id="delete-to-see-btn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Show To See Modal -->
+<div id="show-to-see-modal" class="to-see-dialog" style="display: none;">
+    <div class="dialog-content">
+        <span class="close-to-see-dialog" onclick="closeShowToSeeModal()">&times;</span>
+        <h2>To See Movies</h2>
+        <div id="to-see-table-container">
+            <!-- Table of To See movies will be rendered here -->
+        </div>
+    </div>
+</div>
+
+
+<!-- Update Database Dialog -->
+<div id="update-db-dialog" class="update-db-dialog">
+    <div class="dialog-content">
+        <span class="close-btn">&times;</span>
+        <label for="folder-path">Enter Folder Path:</label>
+        <input type="text" id="update-path" placeholder="e.g., G:\00 English Latest">
+        <!--<button id="browse-btn" class="browse-btn">Browse</button>-->
+        <div class="dialog-buttons">
+            <button id="usual-btn" class="usual-dialog-btn">Update</button>
+            <button id="update-files-btn" class="update-files-btn">Update Files</button>
+            <button class="close-dialog-btn">Close</button>
+        </div>
+        <div id="updateProgress" class="progress-container">
+            <p>Total Files: <span id="total-files">0</span></p>
+            <p>Files Processed: <span id="processed-files">0</span></p>
+            <p>Estimated Time: <span id="estimated-time">Calculating...</span></p>
+            <div class="progress">
+                <div id="progress-bar" style="width: 0%; color: white;" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+        </div>
+        <!--
+            <div class="dialog-buttons">
+            <button id="recover-db-btn" class="recover-db-btn">Recover Database</button>
+            <button id="delete-db-btn" class="delete-db-btn">Delete Database</button>
+        </div>
+        -->
+    </div>
+</div>
+
+<!-- New Update Files Dialog -->
+<div id="update-files-dialog" class="update-files-dialog">
+    <div class="dialog-content">
+        <span class="close-files-btn">&times;</span>
+        <h2>Select Files</h2>
+        <div id="files-list-container" class="files-list-container"></div>
+        <div class="dialog-buttons">
+            <button id="confirm-update-files-btn" class="usual-dialog-btn">Update Selected Files</button>
+            <button class="close-dialog-btn">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Update Dialog -->
+<div id="confirm-update-dialog" class="confirm-update-dialog" style="display: none;">
+    <div class="dialog-content">
+        <h3>Search Subdirectories?</h3>
+        <div class="dialog-buttons">
+            <button id="confirm-update-yes-btn" class="confirm-dialog-btn">Yes</button>
+            <button id="confirm-update-no-btn" class="confirm-dialog-btn">No</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Dialog for Deleting Database -->
+<div id="confirm-delete-dialog" class="confirm-delete-dialog">
+    <div class="dialog-content">
+        <p>Are you sure you want to delete the database?</p>
+        <div class="dialog-buttons">
+            <button id="confirm-yes-btn" class="confirm-yes-btn">Yes</button>
+            <button id="confirm-no-btn" class="confirm-no-btn">No</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Selected Update Dialog -->
+<div id="confirm-selected-update-dialog" class="confirm-update-dialog" style="display: none;">
+    <div class="dialog-content">
+        <h3>Search Subdirectories for Selected Files?</h3>
+        <div class="dialog-buttons">
+            <button id="confirm-selected-update-yes-btn" class="confirm-dialog-btn">Yes</button>
+            <button id="confirm-selected-update-no-btn" class="confirm-dialog-btn">No</button>
+        </div>
+    </div>
+</div>
+
+<!-- View Movie Dialog -->
+<div id="view-movie-dialog" class="view-movie-dialog">
+    <div class="dialog-content">
+        <span class="close-view-dialog-btn">&times;</span>
+        <h2 id="movie-title"></h2>
+        <p><strong>Cast:</strong></p>
+        <ul id="cast-list">
+            <!-- Cast list will be dynamically generated -->
+        </ul>
+        <p><strong>Genres:</strong></p>
+        <ul id="genre-list">
+            <!-- Genre list will be dynamically generated -->
+        </ul>
+        <p><strong>Release Date:</strong> <span id="release-date"></span></p>
+        <div class="dialog-buttons">
+            <button class="close-view-dialog-btn">Close</button>
+        </div>
+    </div>
+</div>
+<!-- Move Movies Dialog -->
+<div id="move-movies-dialog" class="move-movies-dialog">
+    <div class="dialog-content">
+        <span class="close-movie-btn">&times;</span>
+        <label for="movie-rating">Enter the rating:</label>
+        <select id="movie-rating" class="movie-rating">
+            <option value="" selected disabled>Select Rating</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+        </select>
+        <label for="move-folder-path">Enter the folder path:</label>
+        <input type="text" id="move-folder-path" placeholder="e.g., G:\00 English Latest\Moved Movies">
+        <div class="dialog-buttons">
+            <button id="move-btn" class="move-dialog-btn">Move</button>
+            <button id="close-move-dialog-btn" class="close-move-dialog-btn">Close</button>
+        </div>
+        <!--
+        <div id="moveProgress" class="progress-container">
+            <p>Total Movies: <span id="total-movies">0</span></p>
+            <p>Movies Moved: <span id="moved-movies">0</span></p>
+            <div class="progress">
+                <div id="move-progress-bar" style="width: 0%; color: white;" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+        </div>
+        -->
+    </div>
+</div>
+
+<!-- Copy/Move Dialog -->
+<div id="destination-folder-dialog" class="destination-folder-dialog" style="display: none;">
+    <span id="close-destination-dialog" class="close-destination-dialog">&times;</span>
+    <h3>Enter Destination Folder</h3>
+    <input type="text" id="destination-folder-input" placeholder="Enter folder path">
+    <div class="destination-info">
+        <span id="selected-files-count"></span> files selected.
+    </div>
+    <div class="database-selection">
+        <label for="database-select">Shift metadata to another database:</label>
+        <select id="database-select">
+            <option value="original" selected>Keep current database</option>
+            <!-- Options will be dynamically populated here -->
+        </select>
+    </div>
+    <div class="destination-buttons">
+        <button id="move-files-btn" class="move-files-btn">Move</button>
+        <button id="copy-files-btn" class="copy-files-btn">Copy</button>
+    </div>
+</div>
+
+
+<!-- Move Meta Dialog -->
+<div id="move-meta-modal" class="move-meta-dialog">
+    <div class="move-meta-content">
+        <span class="close-meta">&times;</span>
+        <h2>Move Meta</h2>
+        <p>Selected entries: <span id="selected-count">0</span></p>
+        <form id="move-meta-form">
+            <div class="form-row">
+                <label for="language">Select Language:</label>
+                <select id="language" name="language" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="genre">Select Genre:</label>
+                <select id="genre" name="genre" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-row buttons-row">
+                <button type="submit">Move</button>
+            </div>
+        </form>
+        <div class="button-container">
+            <button id="delete-entries-btn" class="delete-entries-btn">Delete Entries</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Meta Dialog -->
+<div id="edit-meta-dialog" class="edit-meta-dialog">
+    <div class="dialog-content">
+        <span class="close-btn">&times;</span>
+        <h2>Edit Details</h2>
+        <h3>Choose Option</h3>
+        <div class="button-row">
+            <button id="edit-meta-details-btn" class="dialog-btn">Edit Meta Details</button>
+            <button id="edit-filename-btn" class="dialog-btn">Edit Filename</button>
+            <button id="delete-entry-btn" class="dialog-btn">Delete Entry</button>
+        </div>
+        <form id="edit-meta-details-form" class="edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="edit-title">Title:</label>
+                <input type="text" id="edit-title">
+            </div>
+            <div class="form-row">
+                <label for="edit-rating">IMDB Rating:</label>
+                <input type="text" id="edit-rating">
+            </div>
+            <div class="form-row">
+                <label for="edit-my-rating">My Rating:</label>
+                <input type="text" id="edit-my-rating">
+            </div>
+            <div class="form-row">
+                <label for="edit-directors">Directors:</label>
+                <input type="text" id="edit-directors">
+            </div>
+            <div class="form-row">
+                <label for="edit-year">Year:</label>
+                <input type="text" id="edit-year">
+            </div>
+            <div class="form-row">
+                <label for="edit-cast">Cast:</label>
+                <input type="text" id="edit-cast">
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-edit-meta" class="dialog-btn">Done</button>
+            </div>
+        </form>        
+        <form id="edit-filename-form" class="edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="edit-basename">Filename:</label>
+                <input type="text" id="edit-basename">
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-edit-filename" class="dialog-btn">Done</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Genre Dialog -->
+<div id="edit-genre-dialog" class="edit-genre-dialog" style="display:none;">
+    <div class="dialog-content">
+        <span class="close-btn" onclick="closeEditGenreDialog()">&times;</span>
+        <h2>Edit Genre</h2>
+        <div class="button-row">
+            <button id="add-genre-btn" class="dialog-btn">Add Genre</button>
+            <button id="delete-genre-btn" class="dialog-btn">Delete Genre</button>
+        </div>
+
+        <form id="add-genre-form" class="edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="new-genre-name">New Genre Name:</label>
+                <input type="text" id="new-genre-name">
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-add-genre" class="dialog-btn">Done</button>
+            </div>
+        </form>
+
+        <form id="delete-genre-form" class="edit-form" style="display: none;">
+            <div class="form-row">
+                <label for="select-genre-delete">Select Genre:</label>
+                <select id="select-genre-delete"></select>
+            </div>
+            <div class="done-btns">
+                <button type="button" id="done-delete-genre" class="dialog-btn">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    // Function to open the create language dialog
+    function openCreateLanguageDialog() {
+        document.getElementById('create-language-dialog').style.display = 'block';
+    }
+
+    // Function to close the create language dialog
+    function closeCreateLanguageDialog() {
+        document.getElementById('create-language-dialog').style.display = 'none';
+    }
+
+    // Function to create a new language
+    document.getElementById('create-language-btn').addEventListener('click', () => {
+        const newLanguage = document.getElementById('new-language').value.trim().toUpperCase();
+
+        if (newLanguage) {
+            fetch(`/check-language/${newLanguage}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        alert('Language already exists.');
+                    } else {
+                        fetch('/create-language', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ language: newLanguage })
+                        }).then(() => {
+                            alert('Language created successfully!');
+                            closeCreateLanguageDialog();
+                            // Optionally, you can refresh the language list here
+                            location.reload();// Assuming you have a function to load the languages
+                        });
+                    }
+                });
+        } else {
+            alert('Please enter a language.');
+        }
+    });
+
+    function openNavDialog() {
+        document.getElementById('nav-dialog').style.display = 'block';
+    }
+
+    function closeNavDialog() {
+        document.getElementById('nav-dialog').style.display = 'none';
+    }
+
+    document.getElementById('add-database-btn').addEventListener('click', () => {
+        document.getElementById('add-database-form').style.display = 'block';
+        document.getElementById('switch-database-form').style.display = 'none';
+        document.getElementById('delete-database-form').style.display = 'none';
+    });
+
+    document.getElementById('switch-database-btn').addEventListener('click', () => {
+        loadDatabases('select-database-switch');
+        document.getElementById('switch-database-form').style.display = 'block';
+        document.getElementById('add-database-form').style.display = 'none';
+        document.getElementById('delete-database-form').style.display = 'none';
+    });
+
+    document.getElementById('delete-database-btn').addEventListener('click', () => {
+        loadDatabases('select-database-delete');
+        document.getElementById('delete-database-form').style.display = 'block';
+        document.getElementById('add-database-form').style.display = 'none';
+        document.getElementById('switch-database-form').style.display = 'none';
+    });
+
+    document.getElementById('done-add-database').addEventListener('click', () => {
+        const dbName = document.getElementById('database-name').value;
+        axios.post('/create-database', { name: dbName })
+            .then(response => {
+                alert('Database creation successful!');
+                closeNavDialog();
+                location.reload()
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Database creation failed.');
+            });
+    });
+
+    document.getElementById('done-switch-database').addEventListener('click', () => {
+        const dbName = document.getElementById('select-database-switch').value;
+        axios.post('/switch-database', { name: dbName })
+            .then(response => {
+                alert('Database switched successfully!');
+                closeNavDialog();
+                location.reload()
+                // You might want to reload the page or update the UI to reflect the database switch
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Database switch failed.');
+            });
+    });
+
+    document.getElementById('done-delete-database').addEventListener('click', () => {
+        const dbName = document.getElementById('select-database-delete').value;
+        if (confirm(`Are you sure you want to delete the database ${dbName}?`)) {
+            axios.post('/delete-database-whole', { name: dbName })
+                .then(response => {
+                    alert('Database deletion complete.');
+                    closeNavDialog();
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Database deletion failed.');
+                });
+        }
+    });
+
+    function loadDatabases(selectElementId) {
+        axios.get('/get-databases')
+            .then(response => {
+                const databases = response.data.databases;
+                const selectElement = document.getElementById(selectElementId);
+                selectElement.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = 'original';
+                defaultOption.textContent = 'Keep current database';
+                selectElement.appendChild(defaultOption);
+                databases.forEach(db => {
+                    const option = document.createElement('option');
+                    option.value = db;
+                    option.textContent = db;
+                    selectElement.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Failed to load databases.');
+            });
+    }
+
+    document.getElementById('admin-tasks-btn').addEventListener('click', () => {
+        document.getElementById('admin-tasks-dialog').style.display = 'block';
+    });
+
+    
+
+    
+
+    const databaseTasksBtn = document.getElementById('database-tasks-btn');
+    const databaseTasksDialog = document.getElementById('database-tasks-dialog');
+    const closeDbDialog = document.querySelector('.close-db-dialog');
+
+    databaseTasksBtn.addEventListener('click', () => {
+        databaseTasksDialog.style.display = 'block';
+    });
+
+    closeDbDialog.addEventListener('click', () => {
+        databaseTasksDialog.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === databaseTasksDialog) {
+            databaseTasksDialog.style.display = 'none';
+        }
+    });
+
+    document.getElementById('rename-files-btn').addEventListener('click', () => {
+        document.getElementById('admin-tasks-dialog').style.display = 'none';
+        document.getElementById('rename-files-dialog').style.display = 'block';
+    });
+
+    document.querySelector('.close-rename-dialog').addEventListener('click', () => {
+        document.getElementById('rename-files-dialog').style.display = 'none';
+    });
+
+    document.getElementById('done-rename-files-btn').addEventListener('click', () => {
+        const sourceFolder = document.getElementById('source-folder-input').value.trim();
+        if (sourceFolder) {
+            fetch('/rename-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ folder: sourceFolder })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Files renamed successfully.');
+                } else {
+                    alert('Error renaming files.');
+                }
+                document.getElementById('rename-files-dialog').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error renaming files:', error);
+                alert('Error renaming files.');
+                document.getElementById('rename-files-dialog').style.display = 'none';
+            });
+        } else {
+            alert('Please enter a valid folder path.');
+        }
+    });
+
+
+    document.querySelector('.close-admin-dialog').addEventListener('click', () => {
+        document.getElementById('admin-tasks-dialog').style.display = 'none';
+    });
+    const changePathDiskBtn = document.getElementById('change-path-disk-btn');
+    const changePathDiskModal = document.getElementById('change-path-disk-modal');
+    const closeChangePathDiskDialog = document.getElementsByClassName('close-change-path-disk-dialog')[0];
+    const changePathDiskForm = document.getElementById('change-path-disk-form');
+
+    changePathDiskBtn.addEventListener('click', () => {
+        changePathDiskModal.style.display = 'block';
+    });
+
+    closeChangePathDiskDialog.onclick = () => {
+        changePathDiskModal.style.display = 'none';
+    };
+
+    window.onclick = (event) => {
+        if (event.target == changePathDiskModal) {
+            changePathDiskModal.style.display = 'none';
+        }
+    };
+
+    changePathDiskForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const presentDisk = document.getElementById('present-disk').value.trim();
+        const requiredDisk = document.getElementById('required-disk').value.trim();
+
+        fetch('/change-path-disk', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ presentDisk, requiredDisk }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Disk paths updated successfully');
+                changePathDiskModal.style.display = 'none';
+                location.reload();
+            } else {
+                alert('Error updating disk paths:', data.error);
+            }
+        });
+    });
+
+    document.querySelector("#zoom-out-btn").addEventListener("click", function(){
+    document.body.style.zoom = document.body.style.zoom-0.1;
+    });
+
+    document.querySelector("#zoom-in-btn").addEventListener("click", function(){
+        document.body.style.zoom = document.body.style.zoom+0.1;
+    });
+    function openEditGenreDialog(language) {
+        document.getElementById('edit-genre-dialog').style.display = 'block';
+        document.getElementById('done-add-genre').dataset.language = language;
+        document.getElementById('done-delete-genre').dataset.language = language;
+        loadGenres(language, 'select-genre-delete');
+    }
+
+    function closeEditGenreDialog() {
+        document.getElementById('edit-genre-dialog').style.display = 'none';
+    }
+    function loadGenres(language, selectId) {
+        fetch(`/genres/${language}`)
+            .then(response => response.json())
+            .then(genres => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '';
+                genres.forEach(genre => {
+                    const option = document.createElement('option');
+                    option.value = genre;
+                    option.textContent = genre;
+                    select.appendChild(option);
+                });
+            });
+    }
+    function openToSeeModal(movieId) {
+        const modal = document.getElementById('to-see-modal');
+        modal.dataset.movieId = movieId;
+        // Check whether the movie is already in To See
+        fetch(`/check-to-see/${movieId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    document.getElementById('add-to-see-btn').disabled = true;
+                    document.getElementById('delete-to-see-btn').disabled = false;
+                } else {
+                    document.getElementById('add-to-see-btn').disabled = false;
+                    document.getElementById('delete-to-see-btn').disabled = true;
+                }
+                modal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error checking To See status:', error);
+            });
+    }
+
+    function closeToSeeModal() {
+        document.getElementById('to-see-modal').style.display = 'none';
+    }
+
+    // Event listener for Add To See button
+    document.getElementById('add-to-see-btn').addEventListener('click', function() {
+        const modal = document.getElementById('to-see-modal');
+        const movieId = modal.dataset.movieId;
+        fetch('/add-to-see', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ movie_id: movieId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Movie added to To See list');
+                closeToSeeModal();
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => console.error('Error adding to To See:', error));
+    });
+
+    // Event listener for Delete To See button
+    document.getElementById('delete-to-see-btn').addEventListener('click', function() {
+        const modal = document.getElementById('to-see-modal');
+        const movieId = modal.dataset.movieId;
+        fetch('/remove-to-see', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ movie_id: movieId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Movie removed from To See list');
+                closeToSeeModal();
+                fetch('/get-to-see-movies')
+                .then(response => response.json())
+                .then(data => {
+                    // Ensure data.movies is used instead of data
+                    const movies = data.movies || []; // Default to an empty array if undefined
+                    const totalCount = data.total_count;
+                    const totalRuntime = data.total_runtime;
+                    const pageRuntime = data.page_runtime;
+
+                    renderMovieTable(movies, totalCount, totalRuntime, pageRuntime);
+                })
+                .catch(error => console.error('Error fetching To See movies:', error));
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => console.error('Error removing from To See:', error));
+    });
+
+    // Function to close the Show To See modal
+    function closeShowToSeeModal() {
+        document.getElementById('show-to-see-modal').style.display = 'none';
+    }
+
+    
+            
+
+
+        function renderMovieTable(allmovies, all_tot_count, all_tot_runtime, all_pg_runtime) {
+            const movieTableContainer = document.getElementById('movie-table-container');
+            const entryCount = document.getElementById('entry-count');
+            const totalRuntimeDisplay = formatRuntime(all_tot_runtime);
+            const pageRuntimeDisplay = formatRuntime(all_pg_runtime);
+
+            movieTableContainer.innerHTML = `
+                <table class="movie-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th onclick="sortTable(1)">IMDB Rating</th>
+                            <th onclick="sortTable(2)">My Rating</th>
+                            <th onclick="sortTable(3)">Title</th>
+                            <th onclick="sortTable(4)">Director</th>
+                            <th onclick="sortTable(5)">Cast</th>
+                            <th onclick="sortTable(6)">Year</th>
+                            <th onclick="sortTable(7)">Last Modified</th>
+                            <th onclick="sortTable(8)">Runtime</th>
+                            <th onclick="sortTable(9)">Path</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    ${allmovies.map(movie => `
+                        <tr>
+                            <td><input type="checkbox" class="movie-checkbox" data-movie-id="${movie.id}"></td>
+                            <td onclick="openViewMovieDetails('${movie.title}')">${movie.rating}</td>
+                            <td onclick="openToSeeModal(${movie.id})" style="cursor:pointer;">${movie.my_rating}</td>
+                            <td onclick="openMovie('${movie.path.replace(/\\/g, '\\\\')}')">${movie.title}</td>
+                            <td onclick="openEditMetaDialog('${movie.id}')">${movie.directors}</td>
+                            <td>${(movie.cast || '').split(',').slice(0, 2).join(', ')}</td>
+                            <td>${movie.year}</td>
+                            <td>${movie.last_modified}</td>
+                            <td>${movie.runtime}</td>
+                            <td>${movie.path}</td>
+                        </tr>
+                    `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            entryCount.innerHTML = `
+                Total movies: ${all_tot_count} | Movies in page: ${allmovies.length}<br>
+                Total runtime: ${totalRuntimeDisplay} | Page runtime: ${pageRuntimeDisplay}
+            `;
+
+            document.getElementById('select-all').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.movie-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+            });
+        }
+        // Open the To See modal and check if the movie is already in the to_see table.
+        // Event listener for Show To See button in the header
+        document.getElementById('show-to-see-btn').addEventListener('click', function() {
+            fetch('/get-to-see-movies')
+                .then(response => response.json())
+                .then(data => {
+                    // Ensure data.movies is used instead of data
+                    const movies = data.movies || []; // Default to an empty array if undefined
+                    const totalCount = data.total_count;
+                    const totalRuntime = data.total_runtime;
+                    const pageRuntime = data.page_runtime;
+
+                    renderMovieTable(movies, totalCount, totalRuntime, pageRuntime);
+                })
+                .catch(error => console.error('Error fetching To See movies:', error));
+        });
+        document.addEventListener('DOMContentLoaded', function(){
+            fetch('/fetch_total_movies')
+                .then(response => response.json())
+                .then(data => {
+                    const movies = data.allmovies;
+                    const totalCount = data.all_tot_count;
+                    const totalRuntime = data.all_tot_runtime;
+                    const pageRuntime = data.all_pg_runtime;
+                    renderMovieTable(movies, totalCount, totalRuntime, pageRuntime);
+                })
+                .catch(error => console.error('Error fetching movie data:', error));
+
+        const missingLanguagesBtn = document.getElementById('missing-languages-btn');
+        const missingGenresBtn = document.getElementById('missing-genres-btn');
+        const adminTasksDialog = document.getElementById('admin-tasks-dialog');
+        const movieTableContainer = document.getElementById('movie-table-container');
+        const entryCount1 = document.getElementById('entry-count');
+
+        // Fetch and display movies with missing languages
+        missingLanguagesBtn.addEventListener('click', () => {
+            adminTasksDialog.style.display = 'none';
+            fetch('/missing-languages')
+                .then(response => response.json())
+                .then(data => {
+                    renderMovieTable(data.movies, data.total_count, data.total_runtime, data.page_runtime);
+                    entryCount1.innerHTML = `
+                        Total movies: ${data.total_count} | Movies in page: ${data.movies.length}<br>
+                        Total runtime: ${formatRuntime(data.total_runtime)} | Page runtime: ${formatRuntime(data.page_runtime)}
+                    `;
+                });
+        });
+
+        // Fetch and display movies with missing genres
+        missingGenresBtn.addEventListener('click', () => {
+            adminTasksDialog.style.display = 'none';
+            fetch('/missing-genres')
+                .then(response => response.json())
+                .then(data => {
+                    renderMovieTable(data.movies, data.total_count, data.total_runtime, data.page_runtime);
+                    entryCount1.innerHTML = `
+                        Total movies: ${data.total_count} | Movies in page: ${data.movies.length}<br>
+                        Total runtime: ${formatRuntime(data.total_runtime)} | Page runtime: ${formatRuntime(data.page_runtime)}
+                    `;
+                });
+        });
+        const languageList = document.getElementById('language-list');
+
+        languageList.addEventListener('click', (event) => {
+            if (event.target.matches('.sub-menu a') || event.target.closest('.iocn-link a')) {
+                // Remove 'selected' class from all options
+                document.querySelectorAll('.sub-menu a, .iocn-link a').forEach(option => {
+                    option.classList.remove('selected');
+                });
+
+                // Add 'selected' class to the clicked option
+                const target = event.target.matches('.sub-menu a') ? event.target : event.target.closest('.iocn-link a');
+                target.classList.add('selected');
+            }
+        });
+        fetch('/languages')
+            .then(response => response.json())
+            .then(languages => {
+                const languageList = document.getElementById('language-list');
+                languages.forEach(language => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <div class="iocn-link">
+                            <a href="#" onclick="fetchMovies('${language}', 'all')">
+                                <i class='bx bx-pencil' onclick="openEditGenreDialog('${language}')"></i>
+                                <span class="link_name">${language}</span>
+                            </a>
+                            <i class='bx bxs-chevron-down arrow'></i>
+                        </div>
+                        <ul class="sub-menu">
+                            <li><a class="link_name" href="#">Genre</a></li>
+                            <li><a href="#" onclick="fetchMovies('${language}', 'all')">All</a></li>
+                        </ul>
+                    `;
+                    languageList.appendChild(listItem);
+
+                // Fetch and append genres
+                fetch(`/genres/${language}`)
+                    .then(response => response.json())
+                    .then(genres => {
+                        const subMenu = listItem.querySelector('.sub-menu');
+                        genres.forEach(genre => {
+                            const genreItem = document.createElement('li');
+                            genreItem.innerHTML = `<a href="#" onclick="fetchMovies('${language}', '${genre}')">${genre}</a>`;
+                            subMenu.appendChild(genreItem);
+                        });
+                    });
+                
+                listItem.querySelector('.arrow').addEventListener('click', (e) => {
+                    let arrowParent = e.target.parentElement.parentElement;
+                    arrowParent.classList.toggle("showMenu");
+                });
+                });
+            });
+
+        
+        document.getElementById('add-genre-btn').addEventListener('click', () => {
+            document.getElementById('add-genre-form').style.display = 'block';
+            document.getElementById('delete-genre-form').style.display = 'none';
+        });
+
+        document.getElementById('delete-genre-btn').addEventListener('click', () => {
+            document.getElementById('add-genre-form').style.display = 'none';
+            document.getElementById('delete-genre-form').style.display = 'block';
+        });
+
+        document.getElementById('done-add-genre').addEventListener('click', () => {
+            const language = document.getElementById('done-add-genre').dataset.language;
+            const genre = document.getElementById('new-genre-name').value;
+            console.log(language);
+            console.log(genre);
+            fetch('/add-genre', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ language, genre })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                // Optionally refresh the genres list here
+                closeEditGenreDialog();
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+        document.getElementById('done-delete-genre').addEventListener('click', () => {
+            const language = document.getElementById('done-delete-genre').dataset.language;
+            const selectedGenre = document.getElementById('select-genre-delete').value;
+            // Delete the genre
+            fetch(`/delete-genre/${language}/${selectedGenre}`, {
+                method: 'DELETE'
+            }).then(response => response.json()).then(data => {
+                if (data.hasMovies) {
+                    alert('There are movies with that genre in that database, move them before deleting.');
+                } else if (data.success) {
+                    alert('Deletion of genre successful');
+                    closeEditGenreDialog();
+                    // Update the submenu
+                    const languageListItem = document.querySelector(`li .iocn-link:contains(${language})`).parentElement;
+                    const genreItem = languageListItem.querySelector(`.sub-menu li a:contains(${selectedGenre})`).parentElement;
+                    genreItem.remove();
+                } else {
+                    alert('Error deleting genre');
+                }
+            });
+        });
+
+        
+        const menuIcon = document.getElementById('menuIcon');
+        const sidebar = document.querySelector('.sidebar');
+
+        // Add click event listener to the menu icon
+        menuIcon.addEventListener('click', () => {
+            // Toggle the 'close' class on the sidebar to open/close it
+            sidebar.classList.toggle('close');
+        });
+        const moveMoviesBtn = document.getElementById('move-movies-btn');
+        const moveMoviesDialog = document.getElementById('move-movies-dialog');
+        const closeMoveDialogBtns = document.querySelectorAll('.close-move-dialog-btn');
+        const closeMoveBtns = document.querySelectorAll('.close-movie-btn');
+        const moveBtn = document.getElementById('move-btn');
+        const moveProgress = document.getElementById('moveProgress');
+        const totalMoviesElement = document.getElementById('total-movies');
+        const movedMoviesElement = document.getElementById('moved-movies');
+        const moveProgressBar = document.getElementById('move-progress-bar');
+        const moveFolderPathInput = document.getElementById('move-folder-path');
+        const ratingInput = document.getElementById('movie-rating'); // New input field for rating
+
+        let totalMoviesCount = 0;
+        let moviesMovedCount = 0;
+
+        function updateMoveProgress() {
+            const progressPercentage = (moviesMovedCount / totalMoviesCount) * 100;
+            moveProgressBar.style.width = `${progressPercentage}%`;
+            moveProgressBar.textContent = `${Math.round(progressPercentage)}%`;
+            movedMoviesElement.textContent = moviesMovedCount;
+            totalMoviesElement.textContent = totalMoviesCount;
+        }
+
+        moveMoviesBtn.addEventListener('click', () => {
+            moveMoviesDialog.style.display = 'block';
+            // Reset progress bar and text
+            moveBtn.disabled = false;
+            //totalMoviesElement.textContent = '0';
+            //movedMoviesElement.textContent = '0';
+           // moveProgressBar.style.width = '0%';
+        });
+
+        closeMoveDialogBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                moveMoviesDialog.style.display = 'none';
+                location.reload();
+            });
+        });
+        closeMoveBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                moveMoviesDialog.style.display = 'none';
+            });
+        });
+
+        moveBtn.addEventListener('click', () => {
+            const moveFolderPath = moveFolderPathInput.value.trim();
+            const rating = ratingInput.value.trim(); // Get rating from the new input field
+            moveBtn.disabled = true;
+
+            if (moveFolderPath === '') {
+                alert('Please enter a valid folder path.');
+                moveBtn.disabled = false;
+                return;
+            }
+
+            const data = { folder_path: moveFolderPath, rating: rating }; // Include rating in the data
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            };
+
+            fetch('/move-movies', options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const eventSource = new EventSource(`/move-movies-stream?folder_path=${moveFolderPath}&rating=${rating}`); // Include rating in the query parameters
+
+                    eventSource.onmessage = function(event) {
+                        const data = JSON.parse(event.data);
+                        if (data.message) {
+                            console.log('Movies moved successfully:', data);
+                            eventSource.close();
+                            alert('Movie transfer completed.');
+                        } else {
+                            //totalMoviesCount = data.total_movies;
+                            //moviesMovedCount = data.moved_movies;
+                            //updateMoveProgress();
+                        }
+                    };
+
+                    eventSource.onerror = function(error) {
+                        console.error('Error moving movies:', error);
+                        eventSource.close();
+                    };
+                })
+                .catch(error => {
+                    console.error('Error moving movies:', error);
+                });
+        });
+
+        
+        const moveCopyFilesBtn = document.getElementById('move-copy-files-btn');
+        const destinationFolderDialog = document.getElementById('destination-folder-dialog');
+        const closeDestinationDialog = document.getElementById('close-destination-dialog');
+        const moveFilesBtn = document.getElementById('move-files-btn');
+        const copyFilesBtn = document.getElementById('copy-files-btn');
+        const destinationFolderInput = document.getElementById('destination-folder-input');
+        const selectedFilesCount = document.getElementById('selected-files-count');
+        const databaseSelect = document.getElementById('database-select');
+
+        
+    
+        // Existing event listeners...
+        moveCopyFilesBtn.addEventListener('click', () => {
+            const selectedFiles = Array.from(document.querySelectorAll('.movie-checkbox:checked'))
+                .map(checkbox => checkbox.dataset.movieId);
+            selectedFilesCount.textContent = selectedFiles.length;
+            destinationFolderDialog.style.display = 'block';
+            loadDatabases('database-select');  // Load databases when the dialog is opened
+        });
+
+        closeDestinationDialog.addEventListener('click', () => {
+            destinationFolderDialog.style.display = 'none';
+        });
+
+        moveFilesBtn.addEventListener('click', () => {
+            const destinationFolder = destinationFolderInput.value.trim();
+            const targetDatabase = databaseSelect.value;
+            
+            if (destinationFolder) {
+                const selectedFiles = Array.from(document.querySelectorAll('.movie-checkbox:checked'))
+                    .map(checkbox => checkbox.dataset.movieId);
+                moveFiles(selectedFiles, destinationFolder, targetDatabase);
+                destinationFolderDialog.style.display = 'none';
+            } else {
+                alert('Please enter a destination folder.');
+            }
+        });
+
+        copyFilesBtn.addEventListener('click', () => {
+            const destinationFolder = destinationFolderInput.value.trim();
+            const targetDatabase = databaseSelect.value;
+            if (destinationFolder) {
+                const selectedFiles = Array.from(document.querySelectorAll('.movie-checkbox:checked'))
+                    .map(checkbox => checkbox.dataset.movieId);
+                copyFiles(selectedFiles, destinationFolder, targetDatabase);
+                destinationFolderDialog.style.display = 'none';
+            } else {
+                alert('Please enter a destination folder.');
+            }
+        });
+
+
+
+        function moveFiles(selectedFiles, destinationFolder, targetDatabase) {
+            console.log("Target database: ",targetDatabase);
+            const data = { files: selectedFiles, destination: destinationFolder, targetDatabase: targetDatabase };
+            //data.destination = data.files.map(destionationFolder => destionationFolder.replace(/\\/g, '\\\\'));
+            fetch('/move-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Files moved successfully!');
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert('Failed to move files.');
+                }
+            })
+            .catch(error => {
+                console.error('Error moving files:', error);
+            });
+        }
+
+        function copyFiles(selectedFiles, destinationFolder, targetDatabase) {
+            const data = { files: selectedFiles, destination: destinationFolder, targetDatabase: targetDatabase };
+            fetch('/copy-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Files copied successfully!');
+                } else {
+                    alert('Failed to copy files.');
+                }
+            })
+            .catch(error => {
+                console.error('Error copying files:', error);
+            });
+        }
+
+
+        const zoomOutBtn = document.querySelector("#zoom-out-btn");
+        const zoomInBtn = document.querySelector("#zoom-in-btn");
+        let zoomLevel = 1;
+
+        // Function to update zoom level and button visibility
+        function updateZoom() {
+            document.body.style.zoom = zoomLevel;
+            zoomOutBtn.disabled = zoomLevel <= 0.5;
+            zoomInBtn.disabled = zoomLevel >= 1.5;
+        }
+
+        // Zoom out button click event listener
+        zoomOutBtn.addEventListener("click", function() {
+            if (zoomLevel > 0.5) {
+                zoomLevel = Math.max(zoomLevel - 0.1, 0.5);
+                updateZoom();
+            }
+        });
+
+        // Zoom in button click event listener
+        zoomInBtn.addEventListener("click", function() {
+            if (zoomLevel < 1.5) {
+                zoomLevel = Math.min(zoomLevel + 0.1, 1.5);
+                updateZoom();
+            }
+        });
+
+        // Initialize zoom level and button visibility
+        updateZoom();
+        const browseBtn = document.getElementById('browse-btn');
+        const folderPathInput = document.getElementById('folder-path');
+
+        /*
+        browseBtn.addEventListener('click', async () => {
+        // Check if the File System Access API is supported
+        if ('showDirectoryPicker' in window) {
+            try {
+            const directoryHandle = await window.showDirectoryPicker();
+            const fullPath = await getFullPath(directoryHandle);
+            folderPathInput.value = fullPath; // Display the full folder path
+            } catch (error) {
+            console.error('Error selecting directory:', error);
+            }
+        } else {
+            alert('Directory selection is not supported by your browser.');
+        }
+        });
+        */
+        
+
+        
+        const confirmDeleteDialog = document.getElementById('confirm-delete-dialog');
+        const deleteDbBtn = document.getElementById('delete-db-btn');
+        const confirmYesBtn = document.getElementById('confirm-yes-btn');
+        const confirmNoBtn = document.getElementById('confirm-no-btn');
+        deleteDbBtn.addEventListener('click', () => {
+            confirmDeleteDialog.style.display = 'block';
+            console.log("Confirm nav dialog opened");
+        });
+
+        confirmNoBtn.addEventListener('click', () => {
+            confirmDeleteDialog.style.display = 'none';
+        });
+
+        confirmYesBtn.addEventListener('click', () => {
+            fetch('/delete-database', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    confirmDeleteDialog.style.display = 'none';
+                    updateDbDialog.style.display = 'none';
+                    location.reload();  // Reload the page
+                } else {
+                    alert('Error deleting database');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting database');
+            });
+        });
+        
+        const updateDbBtn = document.getElementById('update-db-btn');
+        const updateDbDialog = document.getElementById('update-db-dialog');
+        const closeBtn = document.querySelector('.close-btn');
+        const closeDialogBtns = document.querySelectorAll('.close-dialog-btn');
+        const usualBtn = document.getElementById('usual-btn');
+        const totalFilesElement = document.getElementById('total-files');
+        const processedFilesElement = document.getElementById('processed-files');
+        const estimatedTimeElement = document.getElementById('estimated-time');
+        const progressBar = document.getElementById('progress-bar');
+        const recovBtn = document.getElementById('recover-db-btn');
+        const confirmUpdateDialog = document.getElementById('confirm-update-dialog');
+        const confirmUYesBtn = document.getElementById('confirm-update-yes-btn');
+        const confirmUNoBtn = document.getElementById('confirm-update-no-btn');
+
+        
+        let totalFilesCount = 0;
+        let filesProcessedCount = 0;
+
+        let searchSubdirectories = true;
+
+        updateDbBtn.addEventListener('click', () => {
+            updateDbDialog.style.display = 'block';
+            // Reset progress bar and text
+            usualBtn.disabled = false;
+            deleteDbBtn.disabled= false;
+            recovBtn.disabled= false;
+            totalFilesElement.textContent = '0';
+            processedFilesElement.textContent = '0';
+            progressBar.style.width = '0%';
+            estimatedTimeElement.textContent = 'Calculating...';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            updateDbDialog.style.display = 'none';
+        });
+
+        closeDialogBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                updateDbDialog.style.display = 'none';
+                location.reload();
+            });
+        });
+        usualBtn.addEventListener('click', () => {
+            const updatePathInput = document.getElementById('update-path');
+            let updatePath = updatePathInput.value.trim();
+            usualBtn.disabled = true;
+            deleteDbBtn.disabled = true;
+            recovBtn.disabled= true;
+            if (updatePath === '') {
+                updatePath = 'G:/00 English Latest'; // Use default folder path if input is empty
+            }
+
+            // Show confirmation dialog
+            confirmUpdateDialog.style.display = 'block';
+
+            // Handle user choice
+            confirmUYesBtn.onclick = () => {
+                searchSubdirectories = true;
+                confirmUpdateDialog.style.display = 'none';
+                updateDatabase(updatePath, searchSubdirectories);
+            };
+
+            confirmUNoBtn.onclick = () => {
+                searchSubdirectories = false;
+                confirmUpdateDialog.style.display = 'none';
+                updateDatabase(updatePath, searchSubdirectories);
+            };
+        });
+
+        function updateDatabase(updatePath, searchSubdirectories) {
+            const data = { folder_path: updatePath, search_subdirectories: searchSubdirectories };
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            };
+
+            fetch('/update-database', options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const eventSource = new EventSource(`/update-database-stream?folder_path=${updatePath}&search_subdirectories=${searchSubdirectories}`);
+
+                    eventSource.onmessage = function(event) {
+                        const data = JSON.parse(event.data);
+                        if (data.message) {
+                            eventSource.close();
+                        } else {
+                            totalFilesCount = data.total_files;
+                            filesProcessedCount = data.processed_files;
+                            updateProgressBar();
+                        }
+                    };
+
+                    eventSource.onerror = function(error) {
+                        eventSource.close();
+                    };
+                })
+                .catch(error => {
+                    // Handle error here
+                });
+        }
+
+        function updateProgressBar() {
+            const progressPercentage = (filesProcessedCount / totalFilesCount) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressBar.textContent = `${Math.round(progressPercentage)}%`;
+            processedFilesElement.textContent = filesProcessedCount;
+            totalFilesElement.textContent = totalFilesCount;
+
+            const timeRemainingInSeconds = (totalFilesCount - filesProcessedCount) * 9;
+            const hours = Math.floor(timeRemainingInSeconds / 3600);
+            const minutes = Math.floor((timeRemainingInSeconds % 3600) / 60);
+            const seconds = timeRemainingInSeconds % 60;
+            const timeString = `${hours} Hrs ${minutes} Min ${seconds} Sec`;
+
+            estimatedTimeElement.textContent = timeString;
+        }
+
+        const updateFilesBtn = document.getElementById('update-files-btn');
+        const updateFilesDialog = document.getElementById('update-files-dialog');
+        const closeFilesBtn = document.querySelector('.close-files-btn');
+        const confirmUpdateFilesBtn = document.getElementById('confirm-update-files-btn');
+        const filesListContainer = document.getElementById('files-list-container');
+        const confirmSelectedUpdateDialog = document.getElementById('confirm-selected-update-dialog');
+        const confirmSelectedUpdateYesBtn = document.getElementById('confirm-selected-update-yes-btn');
+        const confirmSelectedUpdateNoBtn = document.getElementById('confirm-selected-update-no-btn');
+
+        updateFilesBtn.addEventListener('click', () => {
+            confirmSelectedUpdateDialog.style.display = 'block';
+        });
+
+        confirmSelectedUpdateYesBtn.addEventListener('click', () => {
+            confirmSelectedUpdateDialog.style.display = 'none';
+            fetchFiles(true); // Search subdirectories
+        });
+
+        confirmSelectedUpdateNoBtn.addEventListener('click', () => {
+            confirmSelectedUpdateDialog.style.display = 'none';
+            fetchFiles(false); // Do not search subdirectories
+        });
+
+        function fetchFiles(searchSubdirectories) {
+            const updatePathInput = document.getElementById('update-path');
+            const updatePath = updatePathInput.value.trim() || 'G:/00 English Latest'; // Use default folder path if input is empty
+
+            fetch(`/get-files?folder_path=${encodeURIComponent(updatePath)}&subdirectories=${searchSubdirectories}`)
+                .then(response => response.json())
+                .then(data => {
+                    filesListContainer.innerHTML = '';
+                    data.files.forEach(file => {
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = file;
+                        checkbox.classList.add('file-checkbox');
+
+                        const label = document.createElement('label');
+                        label.textContent = file;
+
+                        const div = document.createElement('div');
+                        div.appendChild(checkbox);
+                        div.appendChild(label);
+
+                        filesListContainer.appendChild(div);
+                    });
+
+                    updateFilesDialog.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching files:', error);
+                });
+        }
+
+        closeFilesBtn.addEventListener('click', () => {
+            updateFilesDialog.style.display = 'none';
+        });
+
+        confirmUpdateFilesBtn.addEventListener('click', () => {
+            const selectedFiles = Array.from(document.querySelectorAll('.file-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedFiles.length === 0) {
+                alert('No files selected!');
+                return;
+            }
+
+            const updatePathInput = document.getElementById('update-path');
+            const updatePath = updatePathInput.value.trim() || 'G:/00 English Latest'; // Use default folder path if input is empty
+
+            updateFilesDialog.style.display = 'none';
+            updateSelectedFiles(selectedFiles, updatePath);
+        });
+
+        function updateSelectedFiles(selectedFiles, updatePath) {
+            const data = { files: selectedFiles };
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            };
+
+            fetch('/update-selected-files', options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const eventSource = new EventSource(`/update-selected-files-stream?files=${encodeURIComponent(selectedFiles.join(','))}&path=${encodeURIComponent(updatePath)}`);
+
+                    eventSource.onmessage = function(event) {
+                        const data = JSON.parse(event.data);
+                        if (data.message) {
+                            eventSource.close();
+                        } else {
+                            totalFilesCount = data.total_files;
+                            filesProcessedCount = data.processed_files;
+                            updateProgressBar();
+                        }
+                    };
+
+                    eventSource.onerror = function(error) {
+                        eventSource.close();
+                    };
+                })
+                .catch(error => {
+                    console.error('Error updating files:', error);
+                });
+        }
+
+        const backupDbBtn = document.getElementById('backup-db-btn');
+
+        backupDbBtn.addEventListener('click', () => {
+            backupDatabase();
+        });
+
+        function backupDatabase() {
+            fetch('/backup-database', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error backing up database:', error);
+                alert('An error occurred while backing up the database.');
+            });
+        }
+        const recoverDbBtn = document.getElementById('recover-db-btn');
+        recoverDbBtn.addEventListener('click', () => {
+            recoverDatabase();
+        });
+
+        function recoverDatabase() {
+            fetch('/recover-database', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload()
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error recovering database:', error);
+                alert('An error occurred while recovering the database.');
+            });
+        }
+        
+        const attributeSelect = document.getElementById('search-attribute');
+        const queryInput = document.getElementById('search-query');
+        const searchOptions = document.getElementById('search-options');
+        const searchButton = document.getElementById('search-btn');
+        attributeSelect.addEventListener('change', updateSearchOptions);
+
+
+        function updateSearchOptions() {
+            const attribute = attributeSelect.value;
+            if (attribute) {
+                queryInput.disabled = false;
+                searchButton.disabled = false;
+
+                if (attribute === "path_root") {
+                    searchOptions.innerHTML = ''; // Clear existing options
+                } else {
+                    fetch(`/get-options/${attribute}`)
+                        .then(response => response.json())
+                        .then(options => {
+                            searchOptions.innerHTML = ''; // Clear existing options
+                            options.forEach(option => {
+                                const optionElement = document.createElement('option');
+                                optionElement.value = option;
+                                searchOptions.appendChild(optionElement);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching options:', error);
+                        });
+                }
+            } else {
+                queryInput.disabled = true;
+                searchButton.disabled = true;
+            }
+        }
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const attribute = document.getElementById('search-attribute').value;
+            let query = document.getElementById('search-query').value;
+            //console.log(attribute);
+            //console.log(query);
+            //query = query.replace(/\\/g, '\\\\\\\\');
+            //console.log(query);
+            searchMovies(attribute, query);
+        });
+        updateSearchOptions();
+
+        const moveMetaBtn = document.getElementById('move-meta-btn');
+        const moveMetamodal = document.getElementById('move-meta-modal');
+        console.log('Close button script loaded');
+        const closeMetaBtn = document.getElementsByClassName('close-meta')[0];
+        console.log('Close button:', closeMetaBtn);
+        const selectedCount = document.getElementById('selected-count');
+        const languageSelect = document.getElementById('language');
+        const genreSelect = document.getElementById('genre');
+        const moveMetaForm = document.getElementById('move-meta-form');
+
+        moveMetaBtn.addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.movie-checkbox:checked');
+            console.log('Checkboxes:', checkboxes);
+            selectedCount.textContent = checkboxes.length;
+
+            // Populate language dropdown
+            fetch('/languages')
+            .then(response => response.json())
+            .then(languages => {
+                languageSelect.innerHTML = languages.map(language => `<option value="${language}">${language}</option>`).join('');
+                languageSelect.value = 'Tamil'; // Set default language to Tamil
+                genreSelect.value = 'Keep Genre'
+            });
+
+            // Show the modal
+            moveMetamodal.style.display = "block";
+        });
+
+        closeMetaBtn.onclick = () => {
+            moveMetamodal.style.display = "none";
+        };
+
+        window.onclick = (event) => {
+            if (event.target == moveMetamodal) {
+                moveMetamodal.style.display = "none";
+            }
+        };
+
+        languageSelect.addEventListener('change', () => {
+            const language = languageSelect.value;
+            fetch(`/genres/${language}`)
+                .then(response => response.json())
+                .then(genres => {
+                    genreSelect.innerHTML = `<option value="Keep Genre">Keep Genre</option>` + genres.map(genre => `<option value="${genre}">${genre}</option>`).join('');
+                    /*
+                    if (language === 'Tamil') {
+                        genreSelect.value = 'Action'; // Set default genre to Action for Tamil
+                    }
+                    */
+                });
+        });
+        
+        fetch(`/genres/Tamil`)
+        .then(response => response.json())
+        .then(genres => {
+            genreSelect.innerHTML = `<option value="Keep Genre">Keep Genre</option>` + genres.map(genre => `<option value="${genre}">${genre}</option>`).join('');
+            genreSelect.value = 'Keep Genre'; // Set default genre to Action for Tamil
+        });
+        
+        moveMetaForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const language = languageSelect.value;
+            const genre = genreSelect.value;
+            const selectedMovies = Array.from(document.querySelectorAll('.movie-checkbox:checked')).map(checkbox => {
+                const movieId = checkbox.getAttribute('data-movie-id');
+                console.log('Movie ID:', movieId);  // Debugging line
+                return movieId;
+            });
+            console.log('Selected Movies:', selectedMovies);
+            fetch('/move-meta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language, genre, movieIds: selectedMovies }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Movies moved successfully');
+                    // Optionally refresh the movie list or perform other actions
+                    moveMetamodal.style.display = "none";
+                    if(genre === 'Keep Genre'){
+                        fetchMovies(language, 'All');
+                    }
+                    else{
+                        fetchMovies(language, genre);
+                    }
+                      // Refresh movie list
+                }else {
+                    console.error('Error moving movies:', data.error);
+                }
+            });
+        });
+
+        const deleteEntriesBtn = document.getElementById('delete-entries-btn');
+        deleteEntriesBtn.addEventListener('click', () => {
+            const selectedMovies = Array.from(document.querySelectorAll('.movie-checkbox:checked')).map(checkbox => {
+                return checkbox.getAttribute('data-movie-id');
+            });
+
+            if (selectedMovies.length === 0) {
+                alert('No entries selected for deletion');
+                return;
+            }
+
+            const confirmDeletion = confirm('Are you sure you want to delete the selected entries?');
+            if (!confirmDeletion) {
+                moveMetamodal.style.display = "none";
+                return;
+            }
+
+            fetch('/delete-entries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ movieIds: selectedMovies }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Deletion completed');
+                    moveMetamodal.style.display = "none";
+                    location.reload()  // Refresh movie list
+                } else {
+                    console.error('Error deleting movies:', data.error);
+                }
+            });
+        });
+
+        const editMetaDialog = document.getElementById('edit-meta-dialog');
+        const editMetaDetailsForm = document.getElementById('edit-meta-details-form');
+        const editFilenameForm = document.getElementById('edit-filename-form');
+        
+        window.openEditMetaDialog = (movieId) => {
+            fetch(`/get-movie-details/${movieId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('edit-title').value = data.title;
+                    document.getElementById('edit-rating').value = data.rating;
+                    document.getElementById('edit-my-rating').value = data.my_rating;
+                    document.getElementById('edit-directors').value = data.directors;
+                    document.getElementById('edit-year').value = data.year;
+                    document.getElementById('edit-cast').value = data.cast;
+                    editMetaDialog.dataset.movieId = movieId;
+                    editMetaDialog.style.display = 'block';
+                    editMetaDetailsForm.style.display = 'none';
+                    editFilenameForm.style.display = 'none';
+                });
+        };
+
+        document.getElementById('edit-meta-details-btn').addEventListener('click', () => {
+            editMetaDetailsForm.style.display = 'block';
+            editFilenameForm.style.display = 'none';
+        });
+
+        document.getElementById('done-edit-meta').addEventListener('click', () => {
+            const movieId = editMetaDialog.dataset.movieId;
+            const updatedDetails = {
+                title: document.getElementById('edit-title').value,
+                rating: document.getElementById('edit-rating').value,
+                my_rating: document.getElementById('edit-my-rating').value,
+                directors: document.getElementById('edit-directors').value,
+                year: document.getElementById('edit-year').value,
+                cast: document.getElementById('edit-cast').value
+            };
+            fetch(`/update-movie-details/${movieId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedDetails)
+            }).then(() => {
+                editMetaDialog.style.display = 'none';
+                alert('Movie details updated successfully!');
+            });
+        });
+
+        document.getElementById('edit-filename-btn').addEventListener('click', () => {
+            const movieId = editMetaDialog.dataset.movieId;
+            fetch(`/get-movie-details/${movieId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const pathArray = data.path.split('/');
+                    const basename = pathArray[pathArray.length - 1];
+                    document.getElementById('edit-basename').value = basename;
+                    editFilenameForm.style.display = 'block';
+                    editMetaDetailsForm.style.display = 'none';
+                });
+        });
+
+        document.getElementById('done-edit-filename').addEventListener('click', () => {
+            const movieId = editMetaDialog.dataset.movieId;
+            const newBasename = document.getElementById('edit-basename').value;
+            fetch(`/rename-movie-file/${movieId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newBasename: newBasename })
+            }).then(() => {
+                editMetaDialog.style.display = 'none';
+                alert('Filename updated successfully!');
+                location.reload();
+            });
+        });
+
+        document.getElementById('delete-entry-btn').addEventListener('click', () => {
+            const movieId = editMetaDialog.dataset.movieId;
+            fetch(`/delete-movie/${movieId}`, {
+                method: 'POST'
+            }).then(() => {
+                editMetaDialog.style.display = 'none';
+                alert('Movie entry deleted successfully!');
+                location.reload(); // Reload the page to reflect the deletion
+            });
+        });
+
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                editMetaDialog.style.display = 'none';
+            });
+        });
+
+    });
+    function searchMovies(attribute, query) {
+        fetch(`/search-movies/${attribute}/${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const movies = data.movies;
+                const totalCount = data.total_count;
+                const movieTableContainer = document.getElementById('movie-table-container');
+                const imageContainer = document.getElementById('image-container');
+                const entryCount = document.getElementById('entry-count');
+                if(imageContainer){
+                    imageContainer.style.display = 'none';
+                }
+
+                const totalRuntime = data.total_runtime; // Assuming the API returns total runtime for all movies
+                const pageRuntime = data.page_runtime;
+                const totalRuntimeDisplay = formatRuntime(totalRuntime);
+                const pageRuntimeDisplay = formatRuntime(pageRuntime);
+
+                movieTableContainer.innerHTML = `
+                    <table class="movie-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th onclick="sortTable(1)">IMDB Rating</th>
+                                <th onclick="sortTable(2)">My Rating</th>
+                                <th onclick="sortTable(3)">Title</th>
+                                <th onclick="sortTable(4)">Director</th>
+                                <th onclick="sortTable(5)">Cast</th>
+                                <th onclick="sortTable(6)">Year</th>
+                                <th onclick="sortTable(7)">Last Modified</th>
+                                <th onclick="sortTable(8)">Runtime</th>
+                                <th onclick="sortTable(9)">Path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        ${movies.map(movie => `
+                            <tr>
+                                <td><input type="checkbox" class="movie-checkbox" data-movie-id="${movie.id}"></td>
+                                <td onclick="openViewMovieDetails('${movie.title}')">${movie.rating}</td>
+                                <td>${movie.my_rating}</td>
+                                <td onclick="openMovie('${movie.path.replace(/\\/g, '\\\\')}')">${movie.title}</td>
+                                <td onclick="openEditMetaDialog('${movie.id}')">${movie.directors}</td>
+                                <td>${(movie.cast || '').split(',').slice(0, 2).join(', ')}</td>
+                                <td>${movie.year}</td>
+                                <td>${movie.last_modified}</td>
+                                <td>${movie.runtime}</td>
+                                <td>${movie.path}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    </table>
+                `;
+                entryCount.innerHTML = `
+                Total movies: ${totalCount} | Movies in page: ${movies.length}<br>
+                Total runtime: ${totalRuntimeDisplay} | Page runtime: ${pageRuntimeDisplay}
+            `;
+            document.getElementById('select-all').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.movie-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+            });
+            });
+
+    }
+    const advSearchBtn = document.getElementById('adv-search-btn');
+    const Advmodal = document.getElementById('adv-search-modal');
+    const closeAdvBtn = document.getElementsByClassName('close-adv-search')[0];
+    const addFilterBtn = document.getElementById('add-filter-btn');
+    const advSearchForm = document.getElementById('adv-search-form');
+    const advSearchSubmitBtn = document.getElementById('adv-search-submit-btn');
+
+    
+    // Open the modal when Advanced Search button is clicked
+    advSearchBtn.onclick = () => {
+        Advmodal.style.display = 'block';
+        const selectElements = document.querySelectorAll('.adv-search-attribute');
+        selectElements.forEach(select => {
+            if (select.children.length === 1) { // Check if options are not already populated
+                populateAttributeOptions(select);
+            }
+        });
+    };
+
+    // Close the modal when the close button is clicked
+    closeAdvBtn.onclick = () => {
+        Advmodal.style.display = 'none';
+    };
+
+    // Close the modal when clicking outside the modal
+    window.onclick = (event) => {
+        if (event.target == Advmodal) {
+            Advmodal.style.display = 'none';
+        }
+    };
+
+    // Add a new filter group
+    addFilterBtn.onclick = () => {
+        const filterGroup = document.createElement('div');
+        filterGroup.className = 'filter-group';
+        filterGroup.innerHTML = `
+            <select class="adv-search-attribute">
+                <option value="" selected disabled>Select Attribute</option>
+                <option value="title">Title</option>
+                <option value="genre">Genre</option>
+                <option value="path">Path</option>
+                <option value="year">Year</option>
+                <option value="rating">IMDB Rating Range</option>
+                <option value="my_rating">My Rating Range</option>
+                <option value="directors">Director</option>
+                <option value="actor">Actor</option>
+                <option value="runtime">Runtime Range</option>
+            </select>
+            <input type="text" class="adv-search-query" list="adv-search-options" placeholder="Search...">
+        `;
+        advSearchForm.insertBefore(filterGroup, addFilterBtn);
+
+        const newSelect = filterGroup.querySelector('.adv-search-attribute');
+        //populateAttributeOptions(newSelect);
+    };
+
+    // Submit the advanced search
+    advSearchSubmitBtn.onclick = () => {
+        const attributeQueryPairs = [];
+        const attributeElements = document.querySelectorAll('.adv-search-attribute');
+        const queryElements = document.querySelectorAll('.adv-search-query');
+        for (let i = 0; i < attributeElements.length; i++) {
+            const attribute = attributeElements[i].value;
+            const query = queryElements[i].value;
+            if (attribute && query) {
+                attributeQueryPairs.push({ attribute, query });
+            }
+        }
+        performAdvancedSearch(attributeQueryPairs);
+        Advmodal.style.display = 'none';
+    };
+
+    // Function to perform the advanced search
+    function performAdvancedSearch(pairs) {
+        const searchParams = pairs.map(pair => `${pair.attribute}/${pair.query}`).join(';');
+        fetch(`/adv-search-movies/${searchParams}`)
+            .then(response => response.json())
+            .then(data => {
+                const movies = data.movies;
+                const totalCount = data.total_count;
+                const movieTableContainer = document.getElementById('movie-table-container');
+                const imageContainer = document.getElementById('image-container');
+                const entryCount = document.getElementById('entry-count');
+                if(imageContainer){
+                    imageContainer.style.display = 'none';
+                }
+                
+                const totalRuntime = data.total_runtime; // Assuming the API returns total runtime for all movies
+                const pageRuntime = data.page_runtime;
+                const totalRuntimeDisplay = formatRuntime(totalRuntime);
+                const pageRuntimeDisplay = formatRuntime(pageRuntime);
+                movieTableContainer.innerHTML = `
+                    <table class="movie-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th onclick="sortTable(1)">IMDB Rating</th>
+                                <th onclick="sortTable(2)">My Rating</th>
+                                <th onclick="sortTable(3)">Title</th>
+                                <th onclick="sortTable(4)">Director</th>
+                                <th onclick="sortTable(5)">Cast</th>
+                                <th onclick="sortTable(6)">Year</th>
+                                <th onclick="sortTable(7)">Last Modified</th>
+                                <th onclick="sortTable(8)">Runtime</th>
+                                <th onclick="sortTable(9)">Path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        ${movies.map(movie => `
+                            <tr>
+                                <td><input type="checkbox" class="movie-checkbox" data-movie-id="${movie.id}"></td>
+                                <td onclick="openViewMovieDetails('${movie.title}')">${movie.rating}</td>
+                                <td>${movie.my_rating}</td>
+                                <td onclick="openMovie('${movie.path.replace(/\\/g, '\\\\')}')">${movie.title}</td>
+                                <td onclick="openEditMetaDialog('${movie.id}')">${movie.directors}</td>
+                                <td>${(movie.cast || '').split(',').slice(0, 2).join(', ')}</td>
+                                <td>${movie.year}</td>
+                                <td>${movie.last_modified}</td>
+                                <td>${movie.runtime}</td>
+                                <td>${movie.path}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    </table>
+                `;
+                entryCount.innerHTML = `
+                    Total movies: ${totalCount} | Movies in page: ${movies.length}<br>
+                    Total runtime: ${totalRuntimeDisplay} | Page runtime: ${pageRuntimeDisplay}
+                `;
+                document.getElementById('select-all').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.movie-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+            });
+            });
+    }
+    const languages = ['Tamil', 'English', 'Hindi', 'Malayalam', 'Telugu', 'Kannada', 'World', 'Others', 'To See', 'Kuppai'];
+    const container = document.getElementById('languages-checkboxes');
+
+    languages.forEach(language => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = language;
+        checkbox.name = 'languages';
+        checkbox.value = language;
+
+        const label = document.createElement('label');
+        label.htmlFor = language;
+        label.textContent = language;
+
+        container.appendChild(checkbox);
+        container.appendChild(label);
+        container.appendChild(document.createElement('br'));
+    });
+
+    document.getElementById('create-delete-languages-btn').addEventListener('click', () => {
+        document.getElementById('create-delete-languages-dialog').style.display = 'block';
+    });
+
+    document.getElementsByClassName('close')[0].addEventListener('click', () => {
+        document.getElementById('create-delete-languages-dialog').style.display = 'none';
+    });
+
+    document.getElementById('create-languages-btn').addEventListener('click', () => {
+        const selectedLanguages = Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(checkbox => checkbox.value);
+        fetch('/create-languages', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({languages: selectedLanguages})
+        }).then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            location.reload(); // Reload the page after showing the alert
+        });
+    });
+
+    document.getElementById('delete-languages-btn').addEventListener('click', () => {
+        const selectedLanguages = Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(checkbox => checkbox.value);
+        fetch('/delete-languages', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({languages: selectedLanguages})
+        }).then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            location.reload(); // Reload the page after showing the alert
+        });
+    });
+
+    function openViewMovieDetails(title) {
+    // Call the function to open view movie details dialog
+    viewMovieDetails(title);
+    }
+
+    function fetchMovies(language, genre) {
+    fetch(`/movies/${language}/${genre}`)
+        .then(response => response.json())
+        .then(data => {
+            const movies = data.movies;
+            const totalCount = data.total_count;
+            const movieTableContainer = document.getElementById('movie-table-container');
+            const imageContainer = document.getElementById('image-container');
+            const entryCount = document.getElementById('entry-count');
+            // Hide the image container
+            const totalRuntime = data.total_runtime; // Assuming the API returns total runtime for all movies
+            const pageRuntime = data.page_runtime;
+            if(imageContainer){
+                imageContainer.style.display = 'none';
+            }
+                
+
+            const totalRuntimeDisplay = formatRuntime(totalRuntime);
+            const pageRuntimeDisplay = formatRuntime(pageRuntime);
+            
+            movieTableContainer.innerHTML = `
+                <table class="movie-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th onclick="sortTable(1)">IMDB Rating</th>
+                            <th onclick="sortTable(2)">My Rating</th>
+                            <th onclick="sortTable(3)">Title</th>
+                            <th onclick="sortTable(4)">Director</th>
+                            <th onclick="sortTable(5)">Cast</th>
+                            <th onclick="sortTable(6)">Year</th>
+                            <th onclick="sortTable(7)">Last Modified</th>
+                            <th onclick="sortTable(8)">Runtime</th>
+                            <th onclick="sortTable(9)">Path</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    ${movies.map(movie => `
+                        <tr>
+                            <td><input type="checkbox" class="movie-checkbox" data-movie-id="${movie.id}"></td>
+                            <td onclick="openViewMovieDetails('${movie.title}')">${movie.rating}</td>
+                            <td onclick="openToSeeModal(${movie.id})" style="cursor:pointer;">${movie.my_rating}</td>
+                            <td onclick="openMovie('${movie.path.replace(/\\/g, '\\\\')}')">${movie.title}</td>
+                            <td onclick="openEditMetaDialog('${movie.id}')">${movie.directors}</td>
+                            <td>${(movie.cast || '').split(',').slice(0, 2).join(', ')}</td>
+                            <td>${movie.year}</td>
+                            <td>${movie.last_modified}</td>
+                            <td>${movie.runtime}</td>
+                            <td>${movie.path}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                </table>
+            `;
+            entryCount.innerHTML = `
+                Total movies: ${totalCount} | Movies in page: ${movies.length}<br>
+                Total runtime: ${totalRuntimeDisplay} | Page runtime: ${pageRuntimeDisplay}
+            `;
+            document.getElementById('select-all').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.movie-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+            });
+        });
+    }
+    function formatRuntime(minutes) {
+        const years = Math.floor(minutes / (365 * 24 * 60));
+        minutes %= (365 * 24 * 60);
+        const days = Math.floor(minutes / (24 * 60));
+        minutes %= (24 * 60);
+        const hours = Math.floor(minutes / 60);
+        minutes %= 60;
+
+        let result = [];
+        if (years > 0) result.push(`${years} yr${years !== 1 ? 's' : ''}`);
+        if (days > 0) result.push(`${days} day${days !== 1 ? 's' : ''}`);
+        if (hours > 0) result.push(`${hours} hr${hours !== 1 ? 's' : ''}`);
+        if (minutes > 0) result.push(`${minutes} min${minutes !== 1 ? 's' : ''}`);
+        
+        return result.join(', ') || '0 minutes';
+    }
+    
+    function openMovie(path) {
+    console.log(path)
+    fetch(`/open-movie`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ path: path })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Movie opened successfully');
+        } else {
+            console.error('Error opening movie');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    }
+
+    function viewMovieDetails(title) {
+    fetch(`/movie-details/${title}`)
+        .then(response => response.json())
+        .then(movie => {
+            console.log('Fetched movie details:', movie);
+
+            const dialog = document.getElementById('view-movie-dialog');
+            const movieTitle = document.getElementById('movie-title');
+            const castList = document.getElementById('cast-list');
+            const genreList = document.getElementById('genre-list');
+            const releaseDate = document.getElementById('release-date');
+
+            movieTitle.textContent = movie.title;
+
+            // Check if movie.cast exists and is a string
+            if (movie.cast) {
+                castList.innerHTML = movie.cast.split(',').map(cast => `<li>${cast}</li>`).join('');
+            } else {
+                castList.innerHTML = '<li>No cast information available</li>';
+            }
+
+            // Check if movie.genres exists and is a string
+            if (movie.genres) {
+                genreList.innerHTML = movie.genres.split(',').slice(0, 5).map(genre => `<li>${genre}</li>`).join('');
+            } else {
+                genreList.innerHTML = '<li>No genres available</li>';
+            }
+            if(movie.release_date){
+                releaseDate.textContent = movie.release_date;
+            }
+            else{
+                releaseDate.textContent = 'Unknown';
+            }
+
+            dialog.classList.add('active');
+            console.log('Dialog displayed');
+        })
+        .catch(error => {
+            console.error('Error fetching movie details:', error);
+        });
+}
+
+    const closeViewDialogBtns = document.querySelectorAll('.close-view-dialog-btn');
+    closeViewDialogBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('view-movie-dialog').classList.remove('active');
+        });
+    });
+
+    
+
+    let sortDirection = {};
+
+    function sortTable(columnIndex) {
+        const table = document.querySelector("table tbody");
+        const rows = Array.from(table.rows);
+
+        if (!sortDirection[columnIndex]) {
+            sortDirection[columnIndex] = true;  // Initial sort direction: ascending
+        } else {
+            sortDirection[columnIndex] = !sortDirection[columnIndex];  // Toggle sort direction
+        }
+
+        rows.sort((a, b) => {
+            const cellA = a.cells[columnIndex].innerText.trim();
+            const cellB = b.cells[columnIndex].innerText.trim();
+
+            let valueA, valueB;
+            switch (columnIndex) {
+                case 1:  // Rating (Float)
+                    valueA = parseFloat(cellA) || 0;
+                    valueB = parseFloat(cellB) || 0;
+                    break;
+                case 2:  // My Rating (Float)
+                    valueA = parseFloat(cellA) || 0;
+                    valueB = parseFloat(cellB) || 0;
+                    break;
+                case 6:  // Year (Integer)
+                    valueA = parseInt(cellA) || 0;
+                    valueB = parseInt(cellB) || 0;
+                    break;
+                case 7:  // Last Modified (Timestamp String)
+                    valueA = parseDate(cellA);
+                    valueB = parseDate(cellB);
+                    break;
+                case 8:  // Runtime (Integer)
+                    valueA = parseInt(cellA) || 0;
+                    valueB = parseInt(cellB) || 0;
+                    break;
+                case 5:  // Cast (First name in cast)
+                    valueA = cellA.split(',')[0].trim().toLowerCase();
+                    valueB = cellB.split(',')[0].trim().toLowerCase();
+                    break;
+                default:  // Text columns (Title, Director, Path)
+                    valueA = cellA.toLowerCase();
+                    valueB = cellB.toLowerCase();
+                    break;
+            }
+
+            if (sortDirection[columnIndex]) {
+                return valueA > valueB ? 1 : -1;
+            } else {
+                return valueA < valueB ? 1 : -1;
+            }
+        });
+
+        rows.forEach(row => table.appendChild(row));
+    }
+
+    function parseDate(dateString) {
+        if (dateString === "N/A") {
+            return new Date(0);  // Treat "N/A" as the earliest possible date
+        }
+        const [datePart, timePart] = dateString.split(' ');
+        const [day, month, year] = datePart.split('/').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        return new Date(year, month - 1, day, hours, minutes, seconds);
+    }
+
+
+
+
+    async function getFullPath(directoryHandle) {
+  // This function tries to simulate a full path (not accurate for web security reasons)
+  // As an alternative, it provides a placeholder path
+        let path = directoryHandle.name;
+
+        let parentHandle = await directoryHandle.getParent();
+        while (parentHandle) {
+            path = `${parentHandle.name}/${path}`;
+            parentHandle = await parentHandle.getParent();
+        }
+
+        // Convert the directory handle to a FileEntry
+        const fileEntry = await directoryHandle.getFile();
+
+        // Get the full path from the FileEntry
+        const fullPath = fileEntry.fullPath;
+
+        return fullPath;
+    
+    }           
+
+</script>
+</body>
+</html>
